@@ -1,0 +1,140 @@
+# Dosya biçimleri
+
+Komutlar ve agent'lar aynı biçimi üretsin diye. Başlıkları birebir kullan — `revise` bu
+başlıklara göre okuyup güncelliyor.
+
+## `.fal-butler/product.md`
+
+`setup` üretir, git'te durur, kampanyalar arasında yeniden kullanılır.
+
+```markdown
+# Ürün profili: <Ürün Adı>
+
+**Çıkarım tarihi:** YYYY-MM-DD
+**Kaynaklar:** README.md, package.json, app/page.tsx   <!-- neye baktığın -->
+
+## Ne yapıyor
+<Bir paragraf. Teknik mimari değil, kullanıcıya ne sağladığı.>
+
+## Kim kullanıyor
+<Hedef kitle. Rol, bağlam, teknik seviye.>
+
+## Hangi sorunu çözüyor
+<İzleyicinin kendini tanıyacağı acı. Reklamın açılış sahnesi buradan doğar.>
+
+## Ana iddia
+<Tek cümlelik vaat. Landing page'de varsa onun gerçek dilini kullan.>
+
+## Farklılaşma
+<Rakiplerden ayrıldığı yer. Çıkaramadıysan sor.>
+
+## Marka tonu
+<Sıcak / kurumsal / esprili / teknik. Çıkaramadıysan sor.>
+
+## Görsel kimlik
+<Renk paleti, arayüz karakteri, varsa logo. Ekran görüntülerinden çıkar.>
+
+## Reklamda kullanılmayacaklar
+<Kullanıcının istemediği şeyler. Yoksa "belirtilmedi" yaz.>
+```
+
+## `.fal-butler/campaigns/<slug>/brief.md`
+
+Röportaj cevapları. Slug: `YYYY-MM-DD-<kısa-ad>`.
+
+```markdown
+# Kampanya brief'i: <Ad>
+
+**Tarih:** YYYY-MM-DD
+
+| Alan | Değer | Kaynak |
+|---|---|---|
+| Amaç | lansman | kullanıcı |
+| Platform | Instagram Reels | kullanıcı |
+| Süre | 60 sn | kullanıcı |
+| Sahne sayısı | 6 | önerildi, onaylandı |
+| Anlatım biçimi | karakterli hikaye | kullanıcı |
+| Ton | sıcak, esprili | kullanıcı |
+| Dil | TR | kullanıcı |
+| Seslendirme | var | kullanıcı |
+| Müzik | var | kullanıcı |
+| Altyazı | var | kullanıcı |
+| CTA | "Ücretsiz dene" | kullanıcı |
+
+## Karakter tarifi (kullanıcının kendi sözleri)
+> <birebir alıntı>
+
+## Profilden türetilenler
+<--quick kullanıldıysa hangi alanların product.md'den türetildiği. Kullanılmadıysa "yok".>
+```
+
+**Kaynak sütunu önemli:** ikinci çalıştırmada neyin kullanıcıdan, neyin varsayımdan geldiği
+görünsün.
+
+## `.fal-butler/campaigns/<slug>/storyboard.md`
+
+Onay kapısında sunulan dosya. **Düz Türkçe, ham prompt yok.**
+
+```markdown
+# Storyboard: <Ad>
+
+**Toplam:** 60 sn · 6 sahne · 9:16 · Instagram Reels
+
+## Karakter
+**Ayşe** — 30'lu yaşların başı, omuz hizası koyu saç, sade bej gömlek, gündelik ofis ortamı.
+Altı sahne boyunca değişmeyenler: yüz, saç, kıyafet, masa düzeni.
+
+## Görsel çizgi
+Soğuk-nötr palette başlar, sahne 4'ten sonra ısınır. Doğal pencere ışığı. 35 mm his.
+
+## Sahneler
+
+### Sahne 1 — Hook (0:00–0:06)
+**Ne oluyor:** Dağınık masa, üst üste düşen bildirimler. Ayşe ekrana bakıyor, bunalmış.
+**Plan:** Yakın plan, hafif yukarıdan.
+**Işık:** Sabah, soğuk yan ışık.
+**Ses:** "Gün başlamadan yorulmak…"
+**Geçiş:** Sert kesim.
+**Model:** <endpoint> · 6 sn · ~$X
+
+### Sahne 2 — … (0:06–0:16)
+…
+
+## Toplam tahmini maliyet
+**~$T** — döküm için `cost.md`.
+```
+
+Her sahnede **Ne oluyor / Plan / Işık / Ses / Geçiş / Model** alanları bulunur. Seslendirme
+kapalıysa "Ses" satırını yazma.
+
+## `.fal-butler/campaigns/<slug>/cost.md`
+
+```markdown
+# Maliyet tahmini: <Ad>
+
+**Hesaplama tarihi:** YYYY-MM-DD
+**Katalog tarihi:** YYYY-MM-DD   <!-- cache'teki fetchedAt -->
+
+| Kalem | Adet | Birim | Birim fiyat | Tutar |
+|---|---|---|---|---|
+| … | … | … | … | … |
+| **Toplam** | | | | **$T** |
+
+**Payın dağılımı:** video %N · görüntü %N · ses %N · montaj %N
+
+## Ucuzlatma seçenekleri
+1. <seçenek> → **-%N** · feda edilen: <ne>
+2. …
+
+> Bu bir tahmindir. Gerçek tutarı fal panelinde göreceksin; yeniden denemeler artırabilir.
+```
+
+## `.fal-butler/campaigns/<slug>/revisions/`
+
+`revise` her değişiklikten **önce** mevcut `workflow.json`'u buraya kopyalar:
+
+```
+revisions/2026-08-05T14-32-10-workflow.json
+```
+
+Zaman damgasında `:` kullanma — Windows dosya adında geçersizdir.

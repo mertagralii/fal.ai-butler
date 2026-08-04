@@ -11,6 +11,7 @@ fal'ın workflow tanım biçimi. `contents.nodes` altındaki düğümler, `run`/
 ## Referanslar
 
 - **`references/schema.md`** — şemanın tam tanımı, doğrulanan kural listesi, bilinen import belirsizliği
+- **`references/model-selection.md`** — modaliteye göre model arama, şemadan eleme, tutarlılık kuralı
 
 ## Değişmez kural
 
