@@ -2,6 +2,9 @@
   "name": "fal-butler",
   "description": "Projesini bitiren yazılımcı için reklam videosu kampanyası kuran plugin. Projeyi okur, ürünü anlar, kısa bir röportaj yapar; senarist, görüntü yönetmeni, hareket yönetmeni, ses tasarımcısı ve kurgucudan oluşan bir ekiple sahneleri birbirine zincirlenmiş, karakteri tutarlı, sesli ve altyazılı bir kampanya tarifi üretir. Çıktı fal.ai'a import edilmeye hazır bir workflow.json'dur. Plugin hiçbir model çalıştırmaz, hiç para harcamaz; üretim ve maliyet kararı kullanıcıda kalır.",
   "version": "0.1.0",
+  "license": "MIT",
+  "homepage": "https://github.com/mertagralii/fal.ai-butler",
+  "repository": "https://github.com/mertagralii/fal.ai-butler",
   "author": {
     "name": "Mert Ağralı",
     "email": "mmertagrali@gmail.com"

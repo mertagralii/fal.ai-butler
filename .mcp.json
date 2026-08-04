@@ -6,6 +6,14 @@
       "headers": {
         "Authorization": "Bearer ${FAL_KEY}"
       }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
     }
   }
 }

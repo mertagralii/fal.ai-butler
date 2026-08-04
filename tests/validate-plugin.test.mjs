@@ -53,6 +53,49 @@ test('frontmatter icindeki iki nokta degeri bozmaz', () => {
   assert.equal(fm.description, 'Sunu yapar: bunu')
 })
 
+test('dengesiz tek tirnak degeri bozmaz', () => {
+  // Turkce kesme isareti her yerde: fal'in, workflow'u
+  const fm = parseFrontmatter("---\ndescription: fal'in workflow'u\n---\n")
+  assert.equal(fm.description, "fal'in workflow'u")
+})
+
+test('blok skaler (|) cok satirli deger okunur', () => {
+  const text = [
+    '---',
+    'name: fal-director',
+    'description: |',
+    '  Senarist agent.',
+    '',
+    '  <example>',
+    '  user: bir reklam kur',
+    '  </example>',
+    'model: sonnet',
+    '---',
+    '',
+    'govde',
+  ].join('\n')
+  const fm = parseFrontmatter(text)
+  assert.equal(fm.name, 'fal-director')
+  assert.equal(fm.model, 'sonnet')
+  assert.match(fm.description, /Senarist agent\./)
+  assert.match(fm.description, /<example>/)
+  assert.match(fm.description, /user: bir reklam kur/)
+})
+
+test('katlanmis skaler (>) satirlari birlestirir', () => {
+  const text = ['---', 'description: >', '  birinci satir', '  ikinci satir', 'model: sonnet', '---'].join('\n')
+  const fm = parseFrontmatter(text)
+  assert.equal(fm.description, 'birinci satir ikinci satir')
+  assert.equal(fm.model, 'sonnet')
+})
+
+test('blok skalerden sonraki anahtarlar kaybolmaz', () => {
+  const text = ['---', 'description: |', '  metin', 'tools: Read, Write', 'color: blue', '---'].join('\n')
+  const fm = parseFrontmatter(text)
+  assert.equal(fm.tools, 'Read, Write')
+  assert.equal(fm.color, 'blue')
+})
+
 // --- plugin ağacı ---
 
 test('mevcut plugin agaci gecerli', () => {
@@ -139,5 +182,24 @@ test('descriptionu olmayan komut yakalanir', () => {
   const dir = scaffold()
   writeFileSync(join(dir, 'commands', 'setup.md'), '---\nargument-hint: "[x]"\n---\n', 'utf8')
   assert.ok(has(validatePlugin(dir), PLUGIN_ERROR.MISSING_FIELD))
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('alt dizindeki isim uzayli komut da denetlenir', () => {
+  const dir = scaffold()
+  mkdirSync(join(dir, 'commands', 'campaign'), { recursive: true })
+  writeFileSync(join(dir, 'commands', 'campaign', 'quick.md'), '# frontmatter yok', 'utf8')
+  assert.ok(has(validatePlugin(dir), PLUGIN_ERROR.MISSING_FRONTMATTER))
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('blok skaler descriptionli agent gecerli sayilir', () => {
+  const dir = scaffold()
+  writeFileSync(
+    join(dir, 'agents', 'fal-x.md'),
+    ['---', 'name: fal-x', 'description: |', '  Uzun aciklama.', '  <example>ornek</example>', '---', '', 'govde'].join('\n'),
+    'utf8',
+  )
+  assert.equal(validatePlugin(dir).valid, true)
   rmSync(dir, { recursive: true, force: true })
 })

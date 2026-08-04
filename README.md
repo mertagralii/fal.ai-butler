@@ -22,11 +22,11 @@ export FAL_KEY="senin-anahtarin"
 ```
 
 ```powershell
-# Windows PowerShell
-$env:FAL_KEY = "senin-anahtarin"
+# Windows — kalıcı olarak kullanıcı ortamına yazar
+[Environment]::SetEnvironmentVariable('FAL_KEY', 'senin-anahtarin', 'User')
 ```
 
-Kalıcı olması için kabuk profiline (`~/.zshrc`, `~/.bashrc`) ya da Windows kullanıcı ortam değişkenlerine ekle.
+Windows'ta `$env:FAL_KEY = "..."` yalnızca o pencerede yaşar ve **çalışmakta olan Claude Code onu görmez** — yukarıdaki komutu kullan ve Claude Code'u yeniden başlat. macOS/Linux'ta kalıcılık için kabuk profiline (`~/.zshrc`, `~/.bashrc`) ekle.
 
 **2. Plugin'i kur**
 
@@ -35,7 +35,17 @@ Kalıcı olması için kabuk profiline (`~/.zshrc`, `~/.bashrc`) ya da Windows k
 /plugin install fal-butler
 ```
 
-Plugin, fal'ın resmi MCP sunucusuna (`https://mcp.fal.ai/mcp`) bağlanır — ayrı bir kurulum gerekmez. Kimlik `Authorization: Bearer ${FAL_KEY}` başlığıyla, istek başına gönderilir; saklanmaz.
+## Getirdiği MCP sunucuları
+
+Plugin üç MCP sunucusu tanımlar; hiçbiri elle kurulum gerektirmez:
+
+| Sunucu | Ne için | Nasıl çalışır |
+|---|---|---|
+| **fal** | Model arama, şema okuma, doküman gezme | `https://mcp.fal.ai/mcp` — HTTP. Kimlik `Authorization: Bearer ${FAL_KEY}` başlığıyla istek başına gönderilir, saklanmaz |
+| **context7** | Kütüphane/SDK dokümanını güncel çekmek | `npx -y @upstash/context7-mcp` |
+| **playwright** | fal doküman sayfalarını tarayıcıyla okumak | `npx @playwright/mcp@latest` |
+
+`context7` ve `playwright` ilk açılışta `npx` ile indirilir. Aynı sunucuları başka bir plugin de getiriyorsa (örneğin `seo-butler`) her ikisi ayrı ad alanında çalışır — çakışmaz, ama iki süreç açılır.
 
 ## Komutlar
 

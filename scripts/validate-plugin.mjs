@@ -18,12 +18,20 @@ export const PLUGIN_ERROR = {
   MISSING_SKILL: 'MISSING_SKILL',
 }
 
-const mdFiles = (dir) =>
-  existsSync(dir)
-    ? readdirSync(dir)
-        .filter((f) => f.endsWith('.md'))
-        .map((f) => join(dir, f))
-    : []
+/**
+ * Dizini özyinelemeli tarar. Claude Code isim uzaylı komutları alt dizinde tutar
+ * (commands/campaign/quick.md) — düz tarama bunları sessizce denetim dışı bırakır.
+ */
+function mdFiles(dir) {
+  if (!existsSync(dir)) return []
+  const out = []
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name)
+    if (entry.isDirectory()) out.push(...mdFiles(full))
+    else if (entry.name.endsWith('.md')) out.push(full)
+  }
+  return out
+}
 
 /** Gövdede geçen `skills/<ad>/` yollarını toplar. */
 const referencedSkills = (text) => [...text.matchAll(/skills\/([a-z0-9-]+)\//g)].map((m) => m[1])
