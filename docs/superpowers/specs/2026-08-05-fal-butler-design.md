@@ -1,7 +1,11 @@
 # fal-butler — Tasarım Dokümanı
 
 **Tarih:** 2026-08-05
-**Durum:** Onaylandı, implementasyon planı bekliyor
+**Durum:** Uygulandı — aşağıdaki §16'daki sapmalarla birlikte
+
+> **Bu doküman tasarım konuşmasının kaydıdır.** Uygulama sırasında araştırma ve inceleme
+> sonucu bilerek saptığımız noktalar §16'da listelidir; çelişki halinde **§16 ve `skills/`
+> altındaki dosyalar geçerlidir**, bu dokümanın gövdesi değil.
 
 ---
 
@@ -303,3 +307,25 @@ Kritik üç alan:
 | Yedi agent'lık zincir yavaş ve pahalı | Kullanıcı sabırsızlanır | `--quick` bayrağı; ilerleme bildirimi |
 | Video model süre limitleri modelden modele değişir | Sahne süresi tutmaz | `fal-motion` şemadan limiti okur, bölme/uyarma yapar |
 | Karakter tutarlılığı zincirleme rağmen bozulabilir | Reklam kullanılamaz | Seed sabitleme + çok açılı referans seti; `revise` ile sahne bazlı yeniden üretim |
+
+---
+
+## 16. Uygulamada bilerek sapılan noktalar
+
+Tasarım konuşmasında bilmediğimiz, uygulama sırasında araştırma ve inceleme ile öğrenilenler.
+
+| # | Tasarımda | Uygulamada | Neden |
+|---|---|---|---|
+| 1 | Workflow JSON düğümleri üst seviye `nodes`, endpoint `endpoint` alanında | Düğümler `contents.nodes`, endpoint **`app`**, çıkış düğümü `display` + `fields`, `input` **sanal düğüm** (`contents.schema.input`) | fal'ın gerçek workflow biçimi canlı kaynaktan doğrulandı |
+| 2 | MCP kimliği `Authorization: Key` varsayılmış, sonra blog yazısına bakılıp `Bearer` yapılmış | **`Key`** | Canlı uç nokta test edildi: `Key` → 200, `Bearer` → 401. fal'ın blog yazısı yanlış. |
+| 3 | ~20 ayrı uzmanlık skill'i | **8 skill**, agent başına bir tane + `references/` | Diskteki `seo-butler` deseni; daha az dosya, daha az bilişsel yük |
+| 4 | Yedi agent, tek yönlü zincir | **Dokuz adım**; `fal-compiler` iki fazlı (0 ve 8) | `fal-animator` ve `fal-promptsmith` şemalara ihtiyaç duyuyor, model seçimi başa alındı |
+| 5 | Agent adı `fal-motion` | **`fal-animator`** | Skill `fal-motion` ile ad çakışıyordu |
+| 6 | Agent'lara `mcp__fal__*` | **Beş okuma aracı adıyla**: `search_models`, `get_model_schema`, `get_pricing`, `recommend_model`, `search_docs` | Joker, `run_model`/`submit_job`/`upload_file`'ı da veriyordu — "para harcamaz" garantisi metinle değil araç listesiyle korunmalı. Denetçi artık joker MCP iznini reddediyor. |
+| 7 | Ürün görselinin nasıl kullanılacağı belirsiz | Plugin **dosya yüklemez**; ürün-ekran sahneleri **üretilmiş temsildir** ve bu kullanıcıya söylenir. Gerçek görsel isteyen kullanıcı URL'ini `workflow.json` girdisine verir | `upload_file` bilinçli olarak araç listesinde yok |
+| 8 | Kampanya workflow'unun girdileri tanımsız | En az `seed` girdisi tanımlanır | Doğrulayıcı `MISSING_INPUT_SCHEMA` veriyordu; ayrıca seed'i girdi yapmak `revise`'ı deterministik kılıyor |
+| 9 | "Model adı ezberleme" istisnasız | **`ffmpeg-api` ailesi istisna** — altyapı, üretim modeli değil. Şeması ve fiyatı yine canlı okunur | Kural fiilen çiğneniyordu; istisnayı gerekçesiyle yazmak, sessizce ihlal etmekten iyidir |
+
+**Hâlâ açık olan tek belirsizlik:** fal, `workflow.json`'un panele nasıl import edileceğini
+dokümante etmiyor. Platform API'leri workflow için yalnızca okuma veriyor. Üretilen dosya fal'ın
+biçimindedir ve doğrulayıcıdan geçer, ama import adımı gerçek bir kampanyayla denenmedi.

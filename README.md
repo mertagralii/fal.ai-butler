@@ -57,6 +57,28 @@ Plugin üç MCP sunucusu tanımlar; hiçbiri elle kurulum gerektirmez:
 
 `/fal-butler:campaign --quick` sekiz soru yerine yalnızca dördünü sorar; kalanını ürün profilinden türetir.
 
+## Arka planda çalışan ekip
+
+Senin iki cümlelik tarifin, yedi uzmandan geçerek profesyonel prompt'lara dönüşür:
+
+| Agent | Ne yapar |
+|---|---|
+| **fal-director** | Hikâye: hook, sahne beat'leri, süre dağılımı, seslendirme metni, karakter bible |
+| **fal-dop** | Görüntü yönetmenliği: plan ölçeği, lens, ışık kurulumu, palet, kompozisyon |
+| **fal-animator** | Hareket: image-to-video, klip süre sınırları ve **sahneler arası zincirleme** |
+| **fal-audio** | Ses: seslendirme, müzik, miksaj — ve konuşma süresi denetimi |
+| **fal-editor** | Kurgu: kesim ritmi, geçişler, altyazı yerleşimi, platform kesimleri |
+| **fal-promptsmith** | Her reçeteyi hedef modelin konuştuğu dile çevirir |
+| **fal-compiler** | Model seçer, `workflow.json`'u derler ve doğrulayıcıdan geçirir |
+
+Karakterin altı sahne boyunca aynı kalması bir tesadüf değil: önce bir karakter sayfası üretilir, her sahnenin başlangıç karesi ondan türetilir, ve **her sahnenin son karesi bir sonrakinin referansına eklenir**. Zincir kopmaz.
+
+## Neden model adı göremezsin
+
+Bu depoda hiçbir fal model adı sabit yazılı değildir. Katalog, şemalar ve fiyatlar çalışma anında fal MCP'den çekilip yerel önbelleğe yazılır (7 gün TTL). fal yeni bir video modeli çıkardığında ya da bir endpoint kaldırdığında plugin'i güncellemen gerekmez.
+
+Tek istisna `ffmpeg-api` ailesidir — o bir üretim modeli değil, montaj altyapısı. Şeması ve fiyatı yine canlı okunur.
+
 ## Ürettiği dosyalar
 
 Hepsi senin repo'nda, `.fal-butler/` altında:
