@@ -1,0 +1,141 @@
+/**
+ * fal workflow JSON bütünlük denetçisi.
+ *
+ * Şemanın tanımı ve kaynakları: skills/fal-workflow-json/references/schema.md
+ * Özet: düğümler `contents.nodes` altında; `run` düğümleri `app` + `input`,
+ * `display` düğümleri `fields` kullanır; `input` sanal bir düğümdür ve
+ * `contents.schema.input` ile tanımlanır.
+ */
+
+export const ERROR = {
+  NOT_OBJECT: 'NOT_OBJECT',
+  MISSING_CONTENTS: 'MISSING_CONTENTS',
+  MISSING_NODES: 'MISSING_NODES',
+  MISSING_INPUT_SCHEMA: 'MISSING_INPUT_SCHEMA',
+  MISSING_OUTPUT_NODE: 'MISSING_OUTPUT_NODE',
+  NODE_ID_MISMATCH: 'NODE_ID_MISMATCH',
+  UNKNOWN_DEPENDENCY: 'UNKNOWN_DEPENDENCY',
+  UNRESOLVED_REFERENCE: 'UNRESOLVED_REFERENCE',
+  UNKNOWN_INPUT_FIELD: 'UNKNOWN_INPUT_FIELD',
+  REFERENCE_NOT_DECLARED: 'REFERENCE_NOT_DECLARED',
+  CYCLE: 'CYCLE',
+  UNKNOWN_ENDPOINT: 'UNKNOWN_ENDPOINT',
+}
+
+/** `input` gerçek bir düğüm değildir; şemadan gelen sanal kaynaktır. */
+const VIRTUAL_INPUT = 'input'
+
+const isPlainObject = (v) => Boolean(v) && typeof v === 'object' && !Array.isArray(v)
+
+/**
+ * "$dugum-id.alan.yol" ifadesini bir düğüm id'sine çözer.
+ *
+ * Düğüm id'leri eğik çizgi ve nokta içerebildiği için (fal_ai/bytedance/seedream/v4/edit_2)
+ * regex ile ayrıştırmak güvenilir değil; bilinen id'lere karşı en uzun önek eşlemesi yapılır.
+ */
+export function resolveRef(ref, nodeIds) {
+  if (typeof ref !== 'string' || !ref.startsWith('$')) return null
+  const body = ref.slice(1)
+  let best = null
+  for (const id of nodeIds) {
+    if (body === id || body.startsWith(id + '.')) {
+      if (best === null || id.length > best.length) best = id
+    }
+  }
+  return best
+}
+
+/** Bir referansın düğüm id'sinden sonraki alan yolunu döndürür. */
+function refPath(ref, nodeId) {
+  const body = ref.slice(1)
+  return body === nodeId ? '' : body.slice(nodeId.length + 1)
+}
+
+/** Bir değerin içindeki tüm "$..." string'lerini toplar (nesne ve dizilerde derinlemesine). */
+function collectRefs(value, out = []) {
+  if (typeof value === 'string') {
+    if (value.startsWith('$')) out.push(value)
+  } else if (Array.isArray(value)) {
+    for (const v of value) collectRefs(v, out)
+  } else if (isPlainObject(value)) {
+    for (const v of Object.values(value)) collectRefs(v, out)
+  }
+  return out
+}
+
+export function validateWorkflow(workflow, { catalog = null } = {}) {
+  const errors = []
+  const push = (code, node, message) => errors.push({ code, node, message })
+
+  if (!isPlainObject(workflow)) {
+    push(ERROR.NOT_OBJECT, null, 'Workflow bir JSON nesnesi olmalı.')
+    return { valid: false, errors }
+  }
+
+  const contents = workflow.contents
+  if (!isPlainObject(contents)) {
+    push(ERROR.MISSING_CONTENTS, null, '"contents" nesnesi yok. Düğümler contents.nodes altındadır.')
+    return { valid: false, errors }
+  }
+
+  const nodes = contents.nodes
+  if (!isPlainObject(nodes)) {
+    push(ERROR.MISSING_NODES, null, '"contents.nodes" nesnesi yok.')
+    return { valid: false, errors }
+  }
+
+  const inputSchema = contents.schema?.input
+  if (!isPlainObject(inputSchema)) {
+    push(ERROR.MISSING_INPUT_SCHEMA, null, '"contents.schema.input" yok — workflow girdileri tanımsız.')
+  }
+  const inputFields = isPlainObject(inputSchema) ? Object.keys(inputSchema) : []
+
+  const ids = Object.keys(nodes)
+  const resolvable = [...ids, VIRTUAL_INPUT]
+
+  if (!ids.some((id) => nodes[id]?.type === 'display')) {
+    push(ERROR.MISSING_OUTPUT_NODE, null, 'type:"display" olan bir çıkış düğümü yok.')
+  }
+
+  for (const id of ids) {
+    const node = nodes[id]
+    const depends = Array.isArray(node?.depends) ? node.depends : []
+
+    if (node?.id !== undefined && node.id !== id) {
+      push(ERROR.NODE_ID_MISMATCH, id, `Düğümün "id" alanı "${node.id}" ama haritadaki anahtar "${id}".`)
+    }
+
+    for (const dep of depends) {
+      if (dep !== VIRTUAL_INPUT && !ids.includes(dep)) {
+        push(ERROR.UNKNOWN_DEPENDENCY, id, `"${dep}" diye bir düğüm yok.`)
+      }
+    }
+
+    // run düğümleri "input", display düğümleri "fields" kullanır — ikisini de tara.
+    for (const ref of collectRefs(node?.input).concat(collectRefs(node?.fields))) {
+      const target = resolveRef(ref, resolvable)
+
+      if (target === null) {
+        push(ERROR.UNRESOLVED_REFERENCE, id, `"${ref}" hiçbir düğüme veya input'a çözülmüyor.`)
+        continue
+      }
+
+      if (target === VIRTUAL_INPUT) {
+        const field = refPath(ref, VIRTUAL_INPUT).split('.')[0]
+        if (inputFields.length > 0 && field && !inputFields.includes(field)) {
+          push(ERROR.UNKNOWN_INPUT_FIELD, id, `"${ref}" — "${field}" contents.schema.input içinde tanımlı değil.`)
+        }
+      }
+
+      if (!depends.includes(target)) {
+        push(
+          ERROR.REFERENCE_NOT_DECLARED,
+          id,
+          `"${ref}" ifadesi "${target}" düğümüne işaret ediyor ama depends listesinde yok.`,
+        )
+      }
+    }
+  }
+
+  return { valid: errors.length === 0, errors }
+}
