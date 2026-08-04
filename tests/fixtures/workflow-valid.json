@@ -1,0 +1,41 @@
+{
+  "name": "test-campaign",
+  "title": "Test Campaign",
+  "contents": {
+    "name": "workflow",
+    "schema": {
+      "input": {
+        "character_description": {
+          "name": "character_description",
+          "label": "Karakter tarifi",
+          "type": "string"
+        }
+      }
+    },
+    "nodes": {
+      "node-hero": {
+        "type": "run",
+        "id": "node-hero",
+        "app": "fal-ai/flux/dev",
+        "depends": ["input"],
+        "input": { "prompt": "$input.character_description" }
+      },
+      "fal_ai/kling/v2_1": {
+        "type": "run",
+        "id": "fal_ai/kling/v2_1",
+        "app": "fal-ai/kling-video/v2/image-to-video",
+        "depends": ["node-hero"],
+        "input": {
+          "image_url": "$node-hero.images.0.url",
+          "duration": 8
+        }
+      },
+      "output": {
+        "type": "display",
+        "id": "output",
+        "depends": ["fal_ai/kling/v2_1"],
+        "fields": { "final_video": "$fal_ai/kling/v2_1.video" }
+      }
+    }
+  }
+}

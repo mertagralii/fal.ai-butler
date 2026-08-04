@@ -1,0 +1,34 @@
+{
+  "name": "cyclic",
+  "title": "Cyclic",
+  "contents": {
+    "name": "workflow",
+    "schema": {
+      "input": {
+        "prompt": { "name": "prompt", "label": "Prompt", "type": "string" }
+      }
+    },
+    "nodes": {
+      "node-a": {
+        "type": "run",
+        "id": "node-a",
+        "app": "fal-ai/flux/dev",
+        "depends": ["input", "node-b"],
+        "input": { "prompt": "$node-b.text" }
+      },
+      "node-b": {
+        "type": "run",
+        "id": "node-b",
+        "app": "fal-ai/flux/dev",
+        "depends": ["node-a"],
+        "input": { "prompt": "$node-a.text" }
+      },
+      "output": {
+        "type": "display",
+        "id": "output",
+        "depends": ["node-a"],
+        "fields": { "image": "$node-a.images.0.url" }
+      }
+    }
+  }
+}

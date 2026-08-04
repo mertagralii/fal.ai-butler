@@ -1,0 +1,27 @@
+{
+  "name": "bad-ref",
+  "title": "Bad Ref",
+  "contents": {
+    "name": "workflow",
+    "schema": {
+      "input": {
+        "prompt": { "name": "prompt", "label": "Prompt", "type": "string" }
+      }
+    },
+    "nodes": {
+      "node-a": {
+        "type": "run",
+        "id": "node-a",
+        "app": "fal-ai/flux/dev",
+        "depends": ["input"],
+        "input": { "prompt": "$hayalet.text" }
+      },
+      "output": {
+        "type": "display",
+        "id": "output",
+        "depends": ["node-a"],
+        "fields": { "image": "$node-a.images.0.url" }
+      }
+    }
+  }
+}

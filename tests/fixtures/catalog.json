@@ -1,0 +1,11 @@
+{
+  "fetchedAt": "2026-08-05T00:00:00.000Z",
+  "endpoints": {
+    "fal-ai/flux/dev": {
+      "input_schema": { "prompt": "string" }
+    },
+    "fal-ai/kling-video/v2/image-to-video": {
+      "input_schema": { "image_url": "string", "duration": "number" }
+    }
+  }
+}
