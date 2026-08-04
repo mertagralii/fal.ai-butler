@@ -137,5 +137,32 @@ export function validateWorkflow(workflow, { catalog = null } = {}) {
     }
   }
 
+  // Döngü tespiti — DFS, üç renkli işaretleme (0 beyaz, 1 gri, 2 siyah).
+  // Sanal "input" düğümü grafikte yer almaz, dolayısıyla döngüye giremez.
+  const color = new Map(ids.map((id) => [id, 0]))
+  const reported = new Set()
+
+  const visit = (id, stack) => {
+    if (color.get(id) === 2) return
+    if (color.get(id) === 1) {
+      const chain = stack.slice(stack.indexOf(id)).concat(id).join(' → ')
+      if (!reported.has(chain)) {
+        reported.add(chain)
+        push(ERROR.CYCLE, id, `Döngü: ${chain}`)
+      }
+      return
+    }
+    color.set(id, 1)
+    stack.push(id)
+    const depends = Array.isArray(nodes[id]?.depends) ? nodes[id].depends : []
+    for (const dep of depends) {
+      if (color.has(dep)) visit(dep, stack)
+    }
+    stack.pop()
+    color.set(id, 2)
+  }
+
+  for (const id of ids) visit(id, [])
+
   return { valid: errors.length === 0, errors }
 }

@@ -112,3 +112,33 @@ test('resolveRef dolar isaretsiz degeri yok sayar', () => {
 test('resolveRef bilinmeyen dugum icin null doner', () => {
   assert.equal(resolveRef('$hayalet.x', ['node-a']), null)
 })
+
+// --- döngü ---
+
+test('dongu tespit edilir', () => {
+  const r = validateWorkflow(fx('workflow-cycle'))
+  assert.equal(r.valid, false)
+  assert.ok(has(r, ERROR.CYCLE))
+})
+
+test('gecerli workflow donguye takilmaz', () => {
+  assert.ok(!has(validateWorkflow(fx('workflow-valid')), ERROR.CYCLE))
+})
+
+test('kendine bagimlilik dongu sayilir', () => {
+  const wf = fx('workflow-valid')
+  wf.contents.nodes['node-hero'].depends.push('node-hero')
+  assert.ok(has(validateWorkflow(wf), ERROR.CYCLE))
+})
+
+test('input sanal dugumu donguye sebep olmaz', () => {
+  const wf = fx('workflow-valid')
+  assert.ok(!has(validateWorkflow(wf), ERROR.CYCLE))
+})
+
+test('dongu mesaji zinciri gosterir', () => {
+  const r = validateWorkflow(fx('workflow-cycle'))
+  const cycle = r.errors.find((e) => e.code === ERROR.CYCLE)
+  assert.match(cycle.message, /node-a/)
+  assert.match(cycle.message, /node-b/)
+})
