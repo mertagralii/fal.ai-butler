@@ -142,3 +142,34 @@ test('dongu mesaji zinciri gosterir', () => {
   assert.match(cycle.message, /node-a/)
   assert.match(cycle.message, /node-b/)
 })
+
+// --- katalog ---
+
+test('katalogdaki app degerleri temiz gecer', () => {
+  const r = validateWorkflow(fx('workflow-valid'), { catalog: fx('catalog') })
+  assert.deepEqual(r.errors, [])
+  assert.equal(r.valid, true)
+})
+
+test('katalogda olmayan app yakalanir', () => {
+  const wf = fx('workflow-valid')
+  wf.contents.nodes['node-hero'].app = 'fal-ai/olmayan-model'
+  assert.ok(has(validateWorkflow(wf, { catalog: fx('catalog') }), ERROR.UNKNOWN_ENDPOINT, 'node-hero'))
+})
+
+test('katalog verilmezse app kontrolu atlanir', () => {
+  const wf = fx('workflow-valid')
+  wf.contents.nodes['node-hero'].app = 'fal-ai/olmayan-model'
+  assert.ok(!has(validateWorkflow(wf), ERROR.UNKNOWN_ENDPOINT))
+})
+
+test('display dugumu app gerektirmez', () => {
+  const r = validateWorkflow(fx('workflow-valid'), { catalog: fx('catalog') })
+  assert.ok(!has(r, ERROR.UNKNOWN_ENDPOINT, 'output'))
+})
+
+test('app alani eksik run dugumu yakalanir', () => {
+  const wf = fx('workflow-valid')
+  delete wf.contents.nodes['node-hero'].app
+  assert.ok(has(validateWorkflow(wf, { catalog: fx('catalog') }), ERROR.UNKNOWN_ENDPOINT, 'node-hero'))
+})

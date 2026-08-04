@@ -7,6 +7,9 @@
  * `contents.schema.input` ile tanımlanır.
  */
 
+import { readFileSync } from 'node:fs'
+import { pathToFileURL } from 'node:url'
+
 export const ERROR = {
   NOT_OBJECT: 'NOT_OBJECT',
   MISSING_CONTENTS: 'MISSING_CONTENTS',
@@ -135,6 +138,23 @@ export function validateWorkflow(workflow, { catalog = null } = {}) {
         )
       }
     }
+
+    // Katalog verildiyse, çalıştırılan modelin gerçekten var olduğunu doğrula.
+    if (catalog && node?.type === 'run') {
+      const known =
+        isPlainObject(catalog.endpoints) &&
+        typeof node.app === 'string' &&
+        Object.prototype.hasOwnProperty.call(catalog.endpoints, node.app)
+      if (!known) {
+        push(
+          ERROR.UNKNOWN_ENDPOINT,
+          id,
+          node.app
+            ? `"${node.app}" katalogda yok — kaldırılmış veya yanlış yazılmış olabilir.`
+            : '"app" alanı yok — run düğümü hangi modeli çalıştıracağını bildirmeli.',
+        )
+      }
+    }
   }
 
   // Döngü tespiti — DFS, üç renkli işaretleme (0 beyaz, 1 gri, 2 siyah).
@@ -165,4 +185,48 @@ export function validateWorkflow(workflow, { catalog = null } = {}) {
   for (const id of ids) visit(id, [])
 
   return { valid: errors.length === 0, errors }
+}
+
+// --- CLI ---
+// pathToFileURL kullanılıyor: Windows'ta ham process.argv[1] karşılaştırması
+// yol ayracı ve sürücü harfi yüzünden sessizce eşleşmez.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const args = process.argv.slice(2)
+  const file = args.find((a) => !a.startsWith('--'))
+  const catalogIndex = args.indexOf('--catalog')
+
+  if (!file) {
+    console.error('Kullanım: node scripts/validate-workflow.mjs <workflow.json> [--catalog <catalog.json>]')
+    process.exit(2)
+  }
+
+  let workflow
+  let catalog = null
+  try {
+    workflow = JSON.parse(readFileSync(file, 'utf8'))
+    if (catalogIndex !== -1) {
+      const catalogFile = args[catalogIndex + 1]
+      if (!catalogFile) {
+        console.error('--catalog bir dosya yolu bekliyor.')
+        process.exit(2)
+      }
+      catalog = JSON.parse(readFileSync(catalogFile, 'utf8'))
+    }
+  } catch (err) {
+    console.error(`Dosya okunamadı veya geçersiz JSON: ${err.message}`)
+    process.exit(2)
+  }
+
+  const result = validateWorkflow(workflow, { catalog })
+
+  if (result.valid) {
+    console.log(`✓ ${file} geçerli`)
+    process.exit(0)
+  }
+
+  console.error(`✗ ${file} — ${result.errors.length} sorun:`)
+  for (const e of result.errors) {
+    console.error(`  [${e.code}]${e.node ? ` ${e.node}:` : ''} ${e.message}`)
+  }
+  process.exit(1)
 }
