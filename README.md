@@ -31,7 +31,7 @@ Kalıcı olması için kabuk profiline (`~/.zshrc`, `~/.bashrc`) ya da Windows k
 **2. Plugin'i kur**
 
 ```
-/plugin marketplace add mmertagrali/fal.ai-butler
+/plugin marketplace add mertagralii/fal.ai-butler
 /plugin install fal-butler
 ```
 
