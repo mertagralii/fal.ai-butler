@@ -21,7 +21,7 @@ Model değişince prompt biçimi de kendiliğinden değişir.
 
 ## Girdin ve çıktın
 
-**Girdi:** tüm reçeteler (`fal-director`, `fal-dop`, `fal-motion`, `fal-audio`, `fal-editor`)
+**Girdi:** tüm reçeteler (`fal-director`, `fal-dop`, `fal-animator`, `fal-audio`, `fal-editor`)
 + seçilen modellerin şemaları
 
 **Çıktı:** düğüm başına nihai `input` nesnesi — prompt metni, negatif prompt, parametreler.

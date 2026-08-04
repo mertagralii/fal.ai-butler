@@ -54,6 +54,17 @@ function refPath(ref, nodeId) {
   return body === nodeId ? '' : body.slice(nodeId.length + 1)
 }
 
+/**
+ * Katalog dosyasını zarfından çıkarır.
+ *
+ * `lib/cache.mjs` veriyi `{ fetchedAt, data }` zarfına sarar; `--catalog` ile verilen dosya
+ * doğrudan o zarftır. Zarfsız (elle yazılmış) katalog da kabul edilir.
+ */
+export function unwrapCatalog(raw) {
+  if (!isPlainObject(raw)) return null
+  return isPlainObject(raw.data) ? raw.data : raw
+}
+
 /** Bir değerin içindeki tüm "$..." string'lerini toplar (nesne ve dizilerde derinlemesine). */
 function collectRefs(value, out = []) {
   if (typeof value === 'string') {
@@ -210,7 +221,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         console.error('--catalog bir dosya yolu bekliyor.')
         process.exit(2)
       }
-      catalog = JSON.parse(readFileSync(catalogFile, 'utf8'))
+      catalog = unwrapCatalog(JSON.parse(readFileSync(catalogFile, 'utf8')))
     }
   } catch (err) {
     console.error(`Dosya okunamadı veya geçersiz JSON: ${err.message}`)

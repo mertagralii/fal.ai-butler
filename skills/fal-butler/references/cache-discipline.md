@@ -8,7 +8,7 @@ Plugin'in fal değiştikçe kendini güncellemesinin yolu bu. Model adları, şe
 ```
 .fal-butler/cache/
   models.json                          # katalog — anahtar: "models"
-  fal-ai__flux__dev.json               # tek model şeması — anahtar: "fal-ai/flux/dev"
+  fal-ai__<vendor>__<model>.json       # tek model şeması — anahtar: endpoint id'sinin kendisi
   docs__workflows.json                 # doküman parçası — anahtar: "docs/workflows"
 ```
 
@@ -17,15 +17,24 @@ merak ediyorsan `cacheKeyToFile()` fonksiyonuna bak; elle tahmin etme.
 
 ## Nasıl kullanılır
 
-```js
-import { readCache, writeCache } from '${CLAUDE_PLUGIN_ROOT}/lib/cache.mjs'
+Modül **`file://` URL'i ile** içe aktarılır. Windows'ta ham mutlak yol (`C:\...`) Node tarafından
+reddedilir (`ERR_UNSUPPORTED_ESM_URL_SCHEME`), ki bu plugin'in birincil platformu:
 
-const cached = readCache('.fal-butler/cache', 'fal-ai/flux/dev')   // varsayılan TTL: 7 gün
+```js
+import { pathToFileURL } from 'node:url'
+const cacheUrl = pathToFileURL(process.env.CLAUDE_PLUGIN_ROOT + '/lib/cache.mjs').href
+const { readCache, writeCache } = await import(cacheUrl)
+
+const key = '<endpoint-id>'                        // ör. katalogdan gelen id
+const cached = readCache('.fal-butler/cache', key) // varsayılan TTL: 7 gün
 if (!cached.hit || cached.stale) {
-  // fal MCP'den şemayı çek, sonra:
-  writeCache('.fal-butler/cache', 'fal-ai/flux/dev', schema)
+  // fal MCP'den şemayı ve fiyatı çek, sonra:
+  writeCache('.fal-butler/cache', key, schema)
 }
 ```
+
+Dosyanın **yazıldığı biçim `{ fetchedAt, data }` zarfıdır.** `readCache` zarfı kendisi açar;
+`validate-workflow.mjs --catalog` da açar. Dosyayı elle okuyorsan `.data` altına bakmayı unutma.
 
 `readCache` bayat veriyi **silmez** — `stale: true` ile birlikte yine döndürür. Bu kasıtlı:
 fal erişilemediğinde bayat veriyle uyararak devam etmek, hiç veri olmamasından iyidir.
@@ -40,12 +49,16 @@ için cache'i atla, doğrudan çek.
 
 ## Ne zaman çekilir
 
-| Ne | Ne zaman | Anahtar |
-|---|---|---|
-| Katalog | `setup`'ta bir kez; sonra bayatlayınca | `models` |
-| Model şeması | `fal-compiler` bir modeli seçtiğinde | endpoint id'sinin kendisi |
-| Örnek prompt'lar | `fal-promptsmith` o modele yazarken | `prompts/<endpoint-id>` |
-| Doküman parçası | Şema belirsizse | `docs/<konu>` |
+| Ne | Ne zaman | Anahtar | fal MCP aracı |
+|---|---|---|---|
+| Katalog | `setup`'ta bir kez; sonra bayatlayınca | `models` | `search_models` |
+| Model şeması | `fal-compiler` bir modeli seçtiğinde | endpoint id'sinin kendisi | `get_model_schema` |
+| **Fiyat** | Model seçilirken — **katalogda gelmez** | şemayla aynı kayda ekle | `get_pricing` |
+| Örnek prompt'lar | `fal-promptsmith` o modele yazarken | `prompts/<endpoint-id>` | `get_model_schema` |
+| Doküman parçası | Şema belirsizse | `docs/<konu>` | `search_docs` |
+
+`search_models` sonucu fiyat taşımaz — `get_pricing` ayrıca çağrılır ve sonuç kataloğa
+eklenerek yazılır. Aksi halde onay kapısındaki maliyet tablosu boş çıkar.
 
 **Toptan indirme yapma.** Bin küsur modelin şemasını çekmek hem yavaş hem gereksiz; kampanyada
 altı-yedi model kullanılıyor.

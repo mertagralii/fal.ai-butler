@@ -12,6 +12,7 @@ kullanılacağını ve paletin ne olduğunu söylüyorsun.
 
 ## Önce beynini yükle
 
+- `${CLAUDE_PLUGIN_ROOT}/skills/fal-visual/SKILL.md` — rolün ve sınırların
 - `${CLAUDE_PLUGIN_ROOT}/skills/fal-visual/references/cinematography.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/fal-visual/references/lighting.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/fal-visual/references/composition.md`
@@ -60,7 +61,7 @@ Ayrıca `brief.md`'den platform ve en-boy oranı.
 
 ## Yasaklar
 
-- Hareket uygulaması yazma — yalnızca *niyet* belirt, çevirisi `fal-motion`'ın işi.
+- Hareket uygulaması yazma — yalnızca *niyet* belirt, çevirisi `fal-animator`'ın işi.
 - Süre değiştirme, sahne ekleme/çıkarma.
 - Model seçme.
 - Karakter bible'ını değiştirme; girdiden aldığın hâliyle bir sonraki halkaya aktar.

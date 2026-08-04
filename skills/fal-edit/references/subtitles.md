@@ -10,9 +10,14 @@ hiç duyulmamış sayılır. `brief.md`'de kapatılmadıysa altyazı üretilir.
 Platform arayüzü kadrajın altını kapatır. Altyazı **alt %20'ye konmaz** —
 bkz. `skills/fal-visual/references/composition.md`.
 
-**Doğru yerleşim:** kadrajın alt-orta bölgesi, ama tabandan yukarıda — 9:16'da (1080×1920)
-altyazının alt kenarı **y ≈ 1450–1550** aralığında olur. Sağ tarafta ikon sütunu olduğu için
-metin yatayda ortalanır ve genişliği kadrajın %80'ini geçmez.
+**Doğru yerleşim:** kadrajın alt-orta bölgesi, ama yasak bölgenin **tamamen üstünde**.
+1080×1920'de alt %20 → y = 1536'nın altı yasaktır. Altyazının **alt kenarı en fazla y = 1500**
+olur; iki satırlık blok için üst kenar ~y = 1380'e çıkar. 36 px'lik pay bilerek bırakılmıştır —
+platformlar arayüz yüksekliğini değiştirebiliyor.
+
+CTA overlay altyazının üstüne bindiğinde blok daha da yükselir: CTA alt kenarı ~y = 1340.
+
+Sağ tarafta ikon sütunu olduğu için metin yatayda ortalanır ve genişliği kadrajın %80'ini geçmez.
 
 ## Okunma hızı
 

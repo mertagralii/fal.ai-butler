@@ -16,6 +16,12 @@ edilecek bir `workflow.json` teslim etmek.
    kullanıcınındır ve fal panelinde verilir.
 2. **Model adı ezberleme.** Katalog canlı çekilir (`references/cache-discipline.md`). Bu
    dosyada ya da başka bir yerde "şu modeli kullan" diye sabit bir isim yazma.
+
+   **Tek istisna: `ffmpeg-api` ailesi.** Montaj bir üretim modeli değil, altyapıdır; fal'ın
+   `compose` / `merge-videos` / `merge-audio-video` / `merge-audios` endpoint'leri sabit
+   isimlerle anılabilir. Yine de **şeması derleme anında okunur** (özellikle metin/altyazı
+   track'i desteği) ve **fiyatı `get_pricing`'den alınır** — bu ikisi ezberden yazılmaz.
+   Endpoint bulunamazsa katalogda `ffmpeg` araması yapılır.
 3. **Onaydan önce dosya yazma.** `campaign` planı sunar, kullanıcı onaylar, *sonra* yazar.
 4. **Kullanıcıya ham prompt gösterme.** `storyboard.md` düz Türkçedir. Prompt'lar
    `workflow.json`'un içinde kalır.
@@ -32,17 +38,26 @@ edilecek bir `workflow.json` teslim etmek.
 
 ## Yaratıcı ekip
 
-Üretim zinciri yedi agent'tan oluşur. Her biri kendi skill'ini okur:
+Yedi agent, **dokuz adımda** çalışır. `fal-compiler` iki kez görünür: modelleri baştan seçer
+(çünkü `fal-animator` ve `fal-promptsmith` şemalara ihtiyaç duyar), JSON'u sonda derler.
 
-| Sıra | Agent | Skill |
-|---|---|---|
-| 1 | `fal-director` | `skills/fal-story/` |
-| 2 | `fal-dop` | `skills/fal-visual/` |
-| 3 | `fal-motion` | `skills/fal-motion/` |
-| 4 | `fal-audio` | `skills/fal-sound/` |
-| 5 | `fal-editor` | `skills/fal-edit/` |
-| 6 | `fal-promptsmith` | `skills/fal-prompt/` |
-| 7 | `fal-compiler` | `skills/fal-workflow-json/` |
+| Adım | Agent | Skill | Ne yapar |
+|---|---|---|---|
+| 0 | `fal-compiler` *(aşama 1)* | `skills/fal-workflow-json/` | model seçimi + şemalar |
+| 1 | `fal-director` | `skills/fal-story/` | hikâye, süreler, VO metni |
+| 2 | `fal-dop` | `skills/fal-visual/` | görsel reçeteler |
+| 3 | `fal-animator` | `skills/fal-motion/` | hareket + zincirleme grafiği |
+| 4 | `fal-audio` | `skills/fal-sound/` | ses + süre denetimi |
+| 5 | `fal-animator` *(gerekirse)* | `skills/fal-motion/` | süre düzeltmesi — **tek tur** |
+| 6 | `fal-editor` | `skills/fal-edit/` | kurgu + montaj yapısı |
+| 7 | `fal-promptsmith` | `skills/fal-prompt/` | tüm prompt'lar |
+| 8 | `fal-compiler` *(aşama 2)* | `skills/fal-workflow-json/` | `workflow.json` + doğrulama |
 
-`fal-audio` ile `fal-motion` arasında süre için tek bir geri besleme turu vardır (bkz.
-`skills/fal-sound/references/sync.md`). Başka geri besleme turu yoktur — zincir tek yönlüdür.
+Adım 5 **en fazla bir kez** çalışır; bu zincirdeki tek geri dönüştür (bkz.
+`skills/fal-sound/references/sync.md`). Başka geri besleme turu yoktur.
+
+Adım 8, aşama 1'in seçtiği endpoint'leri `.fal-butler/cache/` üzerinden yeniden okur — alt agent
+çağrıları durumsuzdur, adım 0'ın belleği adım 8'e taşınmaz.
+
+**Her agent kendi skill'inin `SKILL.md`'sini ve `references/` dosyalarını okur** — agent'ların
+`Skill` aracı yoktur, dosyaları `Read` ile açarlar.

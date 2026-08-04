@@ -1,9 +1,14 @@
 ---
 description: Var olan bir kampanyanın workflow.json'unu revize eder — maliyeti düşürür ya da kurguyu değiştirir. Mevcut bir workflow.json olmadan çalışmaz.
-argument-hint: "[kampanya-adı] [ne değişsin — ör. 'maliyeti yarıya indir' veya '3. sahne daha aydınlık']"
+argument-hint: "[kampanya-adı] [ne değişsin]"
 ---
 
 # fal-butler revizyon
+
+**Argümanlar:** `$ARGUMENTS`
+
+İlk sözcük bir kampanya slug'ıyla eşleşiyorsa o kampanya seçilir; kalanı revizyon isteğidir.
+Boşsa kampanyayı ve isteği sor.
 
 Kullanıcı fal panelinde akışı ve gerçek fiyatı gördü, şimdi bir şey değiştirmek istiyor.
 Maliyet de kurgu da aynı işi gerektirir: mevcut JSON'u okuyup değiştirmek.
@@ -73,7 +78,7 @@ kampanyayı çöpe atmaktır — gerekçesiyle birlikte reddet.
 | İstek | Kim çalışır | Etki |
 |---|---|---|
 | "3. sahne daha aydınlık" | `fal-dop` → `fal-promptsmith` → `fal-compiler` | tek düğüm |
-| "3. sahne daha yavaş" | `fal-motion` → `fal-promptsmith` → `fal-compiler` | tek düğüm |
+| "3. sahne daha yavaş" | `fal-animator` → `fal-promptsmith` → `fal-compiler` | tek düğüm |
 | "3. sahneyi at, 5'i uzat" | `fal-director` → tüm zincir | süre dengesi bozulur |
 | "karakter daha genç olsun" | `fal-director` → tüm zincir | **karakter sayfası + tüm sahneler yeniden** |
 | "müziği çıkar" | `fal-audio` → `fal-editor` → `fal-compiler` | düğüm silinir |
@@ -90,9 +95,7 @@ seed üretmek her şeyi değiştirir.
 Her değişiklikten sonra:
 
 ```bash
-node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-workflow.mjs \
-  .fal-butler/campaigns/<slug>/workflow.json \
-  --catalog .fal-butler/cache/models.json
+node "${CLAUDE_PLUGIN_ROOT}/scripts/validate-workflow.mjs" ".fal-butler/campaigns/<slug>/workflow.json" --catalog ".fal-butler/cache/models.json"
 ```
 
 Geçmezse düzelt ve tekrar doğrula. Geçmeyen dosyayı teslim etme.

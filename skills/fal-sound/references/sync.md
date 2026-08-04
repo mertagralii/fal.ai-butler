@@ -27,15 +27,24 @@ Bir sahnenin metni sahne süresine sığmıyorsa **rapor et**, sessizce kırpma:
 
 ```
 SÜRE UYUŞMAZLIĞI
-Sahne 4: süre 6.0 sn · metin tahmini 8.2 sn · fazla 2.2 sn
+Sahne 4: süre 6.0 sn · metin tahmini 6.8 sn · fazla 0.8 sn
 Metin: "Artık her şey tek ekranda, toplantıya gerek kalmadan ekibin ne yaptığını görüyorsun."
-Öneri: metni ~14 heceye kadar kısalt.
+  → 29 hece · (29/5) + (1×0.4) + 0.6 = 6.8 sn
+Öneri: ~24 heceye indir → 5.8 sn, 0.2 sn pay kalır.
+Örnek: "Artık her şey tek ekranda, toplantıya gerek kalmadan görüyorsun." (24 hece)
 ```
+
+**Hesabı örnekle birlikte göster.** Hece sayısını ve formülü yazmak, hem kendi aritmetiğini
+denetlemeni sağlar hem `fal-animator`'ın kararı değerlendirmesini kolaylaştırır.
+
+**Aşırı kısaltma da hatadır.** Sahneyi 6 sn'de tutup metni 14 heceye indirmek 3,8 sn konuşma +
+2,2 sn sessizlik demektir — `skills/fal-edit/references/rhythm.md` iki saniyeden uzun sessizliği
+yasaklıyor. Hedef, sahne süresinin **%85–95'ini** doldurmaktır.
 
 **Çözüm sırası:**
 
 1. **Metni kısalt** — birinci tercih. Toplam süre hedefi kullanıcıdan geliyor, ona dokunma.
-2. **Sahneyi uzat** — ancak toplam süreden başka bir sahne kısalabiliyorsa. `fal-motion`'a bir kez
+2. **Sahneyi uzat** — ancak toplam süreden başka bir sahne kısalabiliyorsa. `fal-animator`'a bir kez
    geri dön.
 3. **Cümleyi komşu sahneye taşı** — konuşma sahne sınırını aşabilir; görüntü değişirken ses
    devam edebilir. Kurgusal olarak da güçlüdür.

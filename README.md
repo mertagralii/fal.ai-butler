@@ -83,7 +83,7 @@ Hepsi senin repo'nda, `.fal-butler/` altında:
 
 ## Geliştirme
 
-Bağımlılık yok. Node.js ≥ 18 yeterli.
+Bağımlılık yok. Node.js ≥ 20 yeterli.
 
 ```bash
 npm test                          # birim testleri (ağ çağrısı yapmaz)

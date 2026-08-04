@@ -38,10 +38,10 @@ Bir modeli seçmeden önce şemasını çek ve şunlara bak:
 
 | Kontrol | Neden | Kim kullanacak |
 |---|---|---|
-| `duration` kabul edilen değerler | Sahne süresi tutuyor mu | `fal-motion` |
-| `aspect_ratio` / `resolution` | 9:16 destekliyor mu | `fal-motion`, `fal-edit` |
-| Referans görsel alanı (`image_url`, `image_urls`) | Zincirleme mümkün mü | `fal-motion` |
-| `end_image_url` benzeri | first/last frame var mı | `fal-motion` |
+| `duration` kabul edilen değerler | Sahne süresi tutuyor mu | `fal-animator` |
+| `aspect_ratio` / `resolution` | 9:16 destekliyor mu | `fal-animator`, `fal-edit` |
+| **`image_urls` — dizi, en az 2 kabul ediyor mu** | Zincirleme mümkün mü | `fal-animator` |
+| `end_image_url` benzeri | first/last frame var mı | `fal-animator` |
 | `seed` | Determinizm mümkün mü | `fal-prompt` |
 | `negative_prompt` | Negatif prompt yazılacak mı | `fal-prompt` |
 | `strength` | Referansa bağlılık ayarlanabiliyor mu | `fal-prompt` |
@@ -51,6 +51,20 @@ Bir modeli seçmeden önce şemasını çek ve şunlara bak:
 
 **Referans görsel desteği olmayan bir model anahtar kare üretiminde kullanılamaz** — tutarlılık
 stratejisi çöker. Bu eleme kriteri, kalite veya fiyattan önce gelir.
+
+**Tekil `image_url` yetmez.** Zincirleme, anahtar kare N için **aynı anda iki referans** ister:
+karakter sayfası *ve* sahne N−1'in son karesi (bkz.
+`skills/fal-motion/references/keyframe-chaining.md`). Tek referans alan bir model bu filtreden
+geçer gibi görünüp zinciri sessizce koparır. Şemadan **dizi alanı** ve kabul ettiği **azami
+referans sayısı** doğrulanır. Yalnızca tekil referans varsa: karakter sayfasını referans al,
+zinciri kur*ma*, ve bunu `fal-animator`'a ve kullanıcıya bildir.
+
+## Fiyat ayrı bir araçtan gelir
+
+`search_models` sonucu **fiyat taşımaz**. Fiyat için `get_pricing` aracını ayrıca çağır ve
+sonucu kataloğa ekleyerek cache'e yaz. Maliyet tahmini buna dayanıyor
+(`skills/fal-butler/references/cost-model.md`); fiyatsız katalogla onay kapısındaki tablo
+boş çıkar.
 
 ## Seçim önceliği
 
@@ -68,7 +82,7 @@ stratejisi çöker. Bu eleme kriteri, kalite veya fiyattan önce gelir.
 ## Bulunamazsa
 
 **Son kare çıkarma (video-to-image) yoksa:** zinciri yalnızca karakter sayfası üzerinden kur.
-Tutarlılık bir miktar zayıflar. Bunu `fal-motion`'a ve **kullanıcıya** bildir — sessizce zayıf
+Tutarlılık bir miktar zayıflar. Bunu `fal-animator`'a ve **kullanıcıya** bildir — sessizce zayıf
 zincir kurma.
 
 **Bir modalite hiç yoksa** (örneğin Türkçe TTS): kullanıcıya söyle ve seçenek sun — İngilizce

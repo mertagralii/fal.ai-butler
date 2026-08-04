@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { validateWorkflow, resolveRef, ERROR } from '../scripts/validate-workflow.mjs'
+import { validateWorkflow, resolveRef, unwrapCatalog, ERROR } from '../scripts/validate-workflow.mjs'
 
 /** Fixture'ı her seferinde taze okur, böylece testler birbirinin nesnesini bozmaz. */
 const fx = (n) => JSON.parse(readFileSync(new URL(`./fixtures/${n}.json`, import.meta.url), 'utf8'))
@@ -161,6 +161,22 @@ test('katalog verilmezse app kontrolu atlanir', () => {
   const wf = fx('workflow-valid')
   wf.contents.nodes['node-hero'].app = 'fal-ai/olmayan-model'
   assert.ok(!has(validateWorkflow(wf), ERROR.UNKNOWN_ENDPOINT))
+})
+
+test('cache zarfli katalog da kabul edilir', () => {
+  // lib/cache.mjs veriyi { fetchedAt, data } zarfına sarar; CLI bunu açmalı.
+  const wrapped = { fetchedAt: '2026-08-05T00:00:00.000Z', data: fx('catalog') }
+  const r = validateWorkflow(fx('workflow-valid'), { catalog: unwrapCatalog(wrapped) })
+  assert.deepEqual(r.errors, [])
+})
+
+test('zarfsiz katalog bozulmadan gecer', () => {
+  const r = validateWorkflow(fx('workflow-valid'), { catalog: unwrapCatalog(fx('catalog')) })
+  assert.deepEqual(r.errors, [])
+})
+
+test('unwrapCatalog null girdiyi tolere eder', () => {
+  assert.equal(unwrapCatalog(null), null)
 })
 
 test('display dugumu app gerektirmez', () => {

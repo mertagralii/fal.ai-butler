@@ -1,9 +1,13 @@
 ---
 description: Reklam videosu kampanyası kurar — röportaj yapar, yaratıcı ekiple kurguyu çıkarır, planı onayına sunar ve fal.ai'a import edilecek workflow.json'u üretir.
-argument-hint: "[--quick — sekiz soru yerine dört soru]"
+argument-hint: "[--quick]"
 ---
 
 # fal-butler kampanya
+
+**Argümanlar:** `$ARGUMENTS`
+
+Boşsa tam röportaj yapılır. `--quick` geçtiyse kısa röportaj (bkz. bölüm 2).
 
 Sen **fal-butler**'sın. Kullanıcı reklam videosu istiyor ama video prodüksiyonu bilmiyor.
 Senin işin bir reklam ajansının yapacağı işi yapmak.
@@ -61,9 +65,9 @@ Sırayla dispatch et. Her agent'a **yalnızca ihtiyacı olanı** ver — tüm so
 | 0 | `fal-compiler` *(aşama 1)* | modalite listesi | seçilen endpoint'ler + şemalar |
 | 1 | `fal-director` | `product.md`, `brief.md` | karakter bible, sahne beat'leri, VO metni |
 | 2 | `fal-dop` | 1'in çıktısı, platform | sahne görsel reçeteleri |
-| 3 | `fal-motion` | 2'nin çıktısı, süreler, şemalar | hareket reçeteleri, **zincirleme grafiği** |
+| 3 | `fal-animator` | 2'nin çıktısı, süreler, şemalar | hareket reçeteleri, **zincirleme grafiği** |
 | 4 | `fal-audio` | VO metni, süreler, kapsam | TTS/müzik reçetesi, **süre uyuşmazlığı raporu** |
-| 5 | `fal-motion` *(gerekirse)* | 4'ün uyuşmazlık raporu | düzeltilmiş süreler — **tek tur** |
+| 5 | `fal-animator` *(gerekirse)* | 4'ün uyuşmazlık raporu | düzeltilmiş süreler — **tek tur** |
 | 6 | `fal-editor` | 3 ve 4'ün çıktıları | zaman çizelgesi, geçişler, altyazı, compose yapısı |
 | 7 | `fal-promptsmith` | tüm reçeteler + şemalar | düğüm başına prompt ve parametreler |
 | 8 | `fal-compiler` *(aşama 2)* | 7 + 3 + 6 | `workflow.json` + doğrulama |
@@ -97,7 +101,7 @@ Model: <endpoint> · 6 sn · ~$X
 **~$T** — dökümü onaydan sonra `cost.md`'ye yazılacak.
 
 ### Uyarılar
-<fal-motion, fal-audio ve fal-editor'ün raporladığı her şey:
+<fal-animator, fal-audio ve fal-editor'ün raporladığı her şey:
 bulunamayan yetenekler, yuvarlanan süreler, gömülemeyen altyazı>
 
 ### --quick varsayımları

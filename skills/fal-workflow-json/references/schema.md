@@ -54,6 +54,60 @@ altında tanımlanır ve düğümler ona `depends: ["input"]` diyerek bağlanır
 
 Bir düğüm `$input.film_name` yazdığında, `film_name` bu haritada tanımlı olmalıdır.
 
+### Kampanya workflow'unun girdileri
+
+Prompt'ların tamamı `fal-promptsmith` tarafından derleme anında gömülür, dolayısıyla "girdi yok"
+demek isteyebilirsin — **ama olmaz**: doğrulayıcı `MISSING_INPUT_SCHEMA` verir ve fal Workflow
+Builder girdisiz bir workflow'u anlamlı biçimde gösteremez.
+
+Her kampanya workflow'u **en az** şu girdiyi tanımlar:
+
+```json
+"schema": {
+  "input": {
+    "seed": {
+      "name": "seed",
+      "label": "Seed (tekrar üretilebilirlik)",
+      "type": "number",
+      "default": 731914
+    }
+  }
+}
+```
+
+Seed'i girdi yapmak iki işe yarar: kullanıcı fal panelinde tek bir alanı değiştirerek tüm
+kampanyayı yeniden üretebilir, ve `revise` aynı seed'i geçirerek değişmeyen sahneleri
+değişmeden tutabilir.
+
+**Gerçek ürün görseli kullanılıyorsa** (aşağıya bakın) her görsel için birer `string` girdi
+daha eklenir:
+
+```json
+"product_screenshot_url": {
+  "name": "product_screenshot_url",
+  "label": "Ürün ekran görüntüsü URL'i",
+  "type": "string"
+}
+```
+
+## Gerçek ürün görselleri — dürüst durum
+
+Plugin **dosya yüklemez**. `upload_file` aracı bilinçli olarak agent'ların araç listesinde
+yoktur (para harcayan araçlarla aynı kategoride tutuluyor ve plugin kullanıcının dosyalarını
+dışarı göndermez).
+
+Bunun sonucu şudur ve **kullanıcıya açıkça söylenir**:
+
+> Ürün-ekran sahnelerindeki arayüz **üretilmiş bir temsildir**, senin gerçek ekran görüntün
+> değildir. Marka rengin, tema karakterin ve yerleşimin `product.md`'den alınır; ama ekrandaki
+> metinler modelin ürettiği örneklerdir.
+
+**Gerçek görsel kullanmak isteyen kullanıcı için yol:** görselini kendisi erişilebilir bir URL'e
+koyar (fal panelindeki yükleme alanı, kendi CDN'i, GitHub raw), ve bu URL workflow'un
+`product_screenshot_url` girdisine yazılır. `fal-dop` ve `fal-animator` o sahneyi
+text-to-image yerine **image-edit** düğümü olarak kurar. Bunu kullanıcı istediğinde öner,
+kendiliğinden varsayma.
+
 ---
 
 ## Düğüm tipleri
@@ -109,8 +163,11 @@ Gerçek workflow'larda `fal_ai/bytedance/seedream/v4/edit_2` gibi id'ler kullan�
 referansı **regex ile ayrıştırma** — `$` sonrasındaki gövdeyi bilinen düğüm id'leri kümesine karşı
 **en uzun önek** eşlemesiyle çöz. `resolveRef()` bunu yapar.
 
-Yanlış: `/^\$([^.]+)\.(.+)$/` → `$fal_ai/scene/v1.video` ifadesini `fal_ai/scene/v1` yerine
-`fal_ai/scene/v1` sanır ama nokta içeren id'lerde ve iç içe yollarda kırılır.
+Neden regex çalışmaz — düğüm id'leri **nokta da** içerebilir. `$fal_ai/seedream/v4.1.images.0.url`
+ifadesinde id `fal_ai/seedream/v4.1`, alan yolu `images.0.url`. Naif bir regex bunu ya en baştaki
+noktadan (`/^\$([^.]+)\./` → `fal_ai/seedream/v4`, yanlış) ya da en sondan (`/^\$(.+)\.([^.]+)$/`
+→ `fal_ai/seedream/v4.1.images.0`, yanlış) böler. Doğru cevabı yalnızca **bilinen id kümesine
+karşı en uzun önek** verir; `resolveRef()` bunu yapar.
 
 ### Referans, `depends` ile tutarlı olmalı
 

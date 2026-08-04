@@ -19,6 +19,7 @@ export const PLUGIN_ERROR = {
   MISSING_SKILL: 'MISSING_SKILL',
   MISSING_REFERENCE: 'MISSING_REFERENCE',
   EMPTY_BODY: 'EMPTY_BODY',
+  WILDCARD_MCP: 'WILDCARD_MCP',
 }
 
 /** Claude Code'un kabul ettiği model takma adları. */
@@ -52,10 +53,11 @@ const referencedFiles = (text) =>
     file: m[2],
   }))
 
-/** Frontmatter'dan sonraki gövde metnini döndürür. */
+/** Frontmatter'dan sonraki gövde metnini döndürür. BOM'u yok sayar. */
 function bodyOf(text) {
-  const match = /^---\r?\n[\s\S]*?\r?\n---\r?\n?([\s\S]*)$/.exec(text)
-  return match ? match[1] : text
+  const clean = text.charCodeAt(0) === 0xfeff ? text.slice(1) : text
+  const match = /^---\r?\n[\s\S]*?\r?\n---\r?\n?([\s\S]*)$/.exec(clean)
+  return match ? match[1] : clean
 }
 
 export function validatePlugin(root) {
@@ -146,6 +148,17 @@ export function validatePlugin(root) {
     }
     if (fm.tools !== undefined && fm.tools.trim() === '') {
       push(PLUGIN_ERROR.INVALID_FIELD, file, '"tools" boş — ya araç listesi yaz ya alanı kaldır.')
+    }
+    // Joker MCP izni, run_model/submit_job/upload_file gibi para harcayan araçları da verir.
+    // "Plugin hiç para harcamaz" garantisi metinle değil, araç listesiyle korunur.
+    for (const tool of (fm.tools ?? '').split(',').map((t) => t.trim())) {
+      if (tool.startsWith('mcp__') && tool.includes('*')) {
+        push(
+          PLUGIN_ERROR.WILDCARD_MCP,
+          file,
+          `"${tool}" joker — para harcayan araçları da verir. MCP araçlarını adıyla yaz.`,
+        )
+      }
     }
     if (bodyOf(text).trim() === '') {
       push(PLUGIN_ERROR.EMPTY_BODY, file, 'Agent gövdesi boş — sistem prompt\'u yok.')

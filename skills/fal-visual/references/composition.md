@@ -51,4 +51,4 @@ Yapay görselin "yapay" görünmesinin ikinci sebebi düzlüktür. Üç katman k
 ## Sahne geçişlerinde kompozisyon
 
 `fal-edit` match cut isteyecekse iki sahnenin kompozisyonu birbirini karşılamalı: aynı ölçek,
-konu aynı kadraj bölgesinde. Bunu reçeteye not düş ki `fal-motion` ve `fal-editor` kullanabilsin.
+konu aynı kadraj bölgesinde. Bunu reçeteye not düş ki `fal-animator` ve `fal-editor` kullanabilsin.

@@ -60,13 +60,30 @@ Röportaj cevapları. Slug: `YYYY-MM-DD-<kısa-ad>`.
 | Müzik | var | kullanıcı |
 | Altyazı | var | kullanıcı |
 | CTA | "Ücretsiz dene" | kullanıcı |
+| Seed | 731914 | üretildi |
 
 ## Karakter tarifi (kullanıcının kendi sözleri)
 > <birebir alıntı>
 
+## Sabit karakter bloğu (İngilizce)
+<fal-promptsmith'in ürettiği blok, BİREBİR. Her sahne prompt'una değişmeden yapıştırılır.>
+```
+A woman in her early thirties with shoulder-length dark brown straight hair parted in the
+middle, wearing a beige linen shirt with rolled sleeves and a thin silver necklace. No glasses,
+no hat, no visible tattoos.
+```
+
 ## Profilden türetilenler
 <--quick kullanıldıysa hangi alanların product.md'den türetildiği. Kullanılmadıysa "yok".>
+
+## Revizyon geçmişi
+<revise her çalıştığında bir satır ekler: tarih, ne değişti, yeni maliyet.>
 ```
+
+**Seed ve sabit karakter bloğu `revise`'ın deterministik olmasının şartıdır.** Seed her
+çalıştırmada yeniden üretilirse değişmeyen sahneler de değişir; karakter bloğu Türkçe bible'dan
+her seferinde yeniden çevrilirse farklı bir İngilizce metin çıkar ve altı sahne kayar. İkisi de
+burada yazılı kalır ve `revise` bunları **yeniden üretmeden okur**.
 
 **Kaynak sütunu önemli:** ikinci çalıştırmada neyin kullanıcıdan, neyin varsayımdan geldiği
 görünsün.

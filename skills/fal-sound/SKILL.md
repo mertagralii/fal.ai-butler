@@ -15,7 +15,7 @@ zincirdeki tek geri besleme noktasıdır.
 
 ## Girdin ve çıktın
 
-**Girdi:** seslendirme metni (`fal-director`'dan) + sahne süreleri (`fal-motion`'dan, yuvarlanmış hali)
+**Girdi:** seslendirme metni (`fal-director`'dan) + sahne süreleri (`fal-animator`'dan, yuvarlanmış hali)
 **Çıktı:** TTS reçetesi + müzik reçetesi + miksaj planı + **süre uyuşmazlığı raporu**
 
 ## Kapsam kampanyaya göre değişir

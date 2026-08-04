@@ -16,7 +16,7 @@ videoya çevirmek senin işin — ve `workflow.json`'un son, en karmaşık düğ
 
 ## Girdin ve çıktın
 
-**Girdi:** klip düğümleri (`fal-motion`'dan), ses reçetesi ve miksaj planı (`fal-audio`'dan),
+**Girdi:** klip düğümleri (`fal-animator`'dan), ses reçetesi ve miksaj planı (`fal-audio`'dan),
 altyazı parçaları, `brief.md`'deki platform ve kapsam seçimleri
 
 **Çıktı:** zaman çizelgesi, geçiş tipleri, altyazı zamanlaması, platform kesim tanımları,

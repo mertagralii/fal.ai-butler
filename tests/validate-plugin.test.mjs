@@ -44,6 +44,13 @@ test('frontmatter yoksa null doner', () => {
   assert.equal(parseFrontmatter('# baslik\nmetin'), null)
 })
 
+test('BOM ile baslayan dosyanin frontmatteri okunur', () => {
+  // PowerShell'in "utf8" kodlaması BOM yazar; BOM ^--- eşleşmesini bozar.
+  const fm = parseFrontmatter('﻿---\nname: fal-x\ndescription: d\n---\n\ngovde')
+  assert.equal(fm?.name, 'fal-x')
+  assert.equal(fm?.description, 'd')
+})
+
 test('frontmatter tirnaklari soyar', () => {
   assert.equal(parseFrontmatter('---\nname: "abc"\n---\n').name, 'abc')
 })
@@ -242,6 +249,34 @@ test('bos tools alani yakalanir', () => {
   writeFileSync(join(dir, 'agents', 'fal-x.md'), '---\nname: fal-x\ndescription: d\ntools:\n---\n', 'utf8')
   assert.ok(has(validatePlugin(dir), PLUGIN_ERROR.INVALID_FIELD))
   rmSync(dir, { recursive: true, force: true })
+})
+
+test('joker mcp izni yakalanir', () => {
+  // Joker, run_model/submit_job/upload_file'i da verir ve "para harcamaz" garantisini deler.
+  const dir = scaffold()
+  writeFileSync(
+    join(dir, 'agents', 'fal-x.md'),
+    '---\nname: fal-x\ndescription: d\ntools: Read, mcp__fal__*\n---\n\ngovde',
+    'utf8',
+  )
+  assert.ok(has(validatePlugin(dir), PLUGIN_ERROR.WILDCARD_MCP))
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('acik mcp arac adlari sorun cikarmaz', () => {
+  const dir = scaffold()
+  writeFileSync(
+    join(dir, 'agents', 'fal-x.md'),
+    '---\nname: fal-x\ndescription: d\ntools: Read, mcp__fal__search_models\n---\n\ngovde',
+    'utf8',
+  )
+  assert.equal(validatePlugin(dir).valid, true)
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('gercek pluginde hicbir agent joker mcp izni tasimaz', () => {
+  const r = validatePlugin(ROOT)
+  assert.ok(!has(r, PLUGIN_ERROR.WILDCARD_MCP))
 })
 
 test('agent govdesi bos olamaz', () => {

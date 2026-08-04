@@ -60,10 +60,22 @@ kullanıcı "sen karar ver" diyebilir. `brief.md` varsa önceki cevaplar varsay�
 planda açıkça listele ki kullanıcı itiraz edebilsin.
 
 ### 3. Ekip zinciri
-`director → dop → motion → audio → editor → promptsmith → compiler`
 
-Her agent'a **yalnızca ihtiyacı olanı** ver; tüm sohbeti aktarma. Her agent'ın çıktısı bir sonrakinin
-girdisidir. `audio`, süre uyuşmazlığı bildirirse `motion`'a bir kez geri dön, sonra devam et.
+```
+compiler(aşama 1) → director → dop → animator → audio → [animator] → editor → promptsmith → compiler(aşama 2)
+        ↑ model seçimi                              ↑ tek geri dönüş        ↑ dosyayı yazan tek adım
+```
+
+Model seçimi **başta** yapılır: `fal-animator` süre sınırlarını, `fal-promptsmith` prompt
+lehçesini şemadan okuyor.
+
+Her agent'a **yalnızca ihtiyacı olanı** ver; tüm sohbeti aktarma. `audio`, süre uyuşmazlığı
+bildirirse `animator`'a **bir kez** geri dön, sonra devam et. Aşama 2, aşama 1'in endpoint
+listesini `.fal-butler/cache/` üzerinden yeniden okur — alt agent çağrıları durumsuzdur.
+
+**Cache yazımı onay kuralının istisnasıdır:** aşama 1 model şemalarını `.fal-butler/cache/`
+altına yazar. "Onaydan önce dosya yazma" kuralı kampanya çıktıları için geçerlidir; cache
+yeniden üretilebilir ve `.gitignore`'dadır.
 
 ### 4. Onay kapısı — **dosya yazmadan önce**
 
@@ -95,7 +107,8 @@ belgelenmediğini** de söyle (bkz. `skills/fal-workflow-json/references/schema.
 Birden fazla kampanya varsa hangisi olduğunu sor.
 
 ### 2. Yedekle
-Değişiklikten **önce** mevcut dosyayı `revisions/<ISO-zaman-damgası>-workflow.json` olarak kopyala.
+Değişiklikten **önce** mevcut dosyayı `revisions/<YYYY-MM-DDTHH-mm-ss>-workflow.json` olarak
+kopyala. Zaman damgasında `:` **kullanma** — Windows'ta geçersiz dosya adıdır.
 
 ### 3. İki tür revizyon, tek komut
 

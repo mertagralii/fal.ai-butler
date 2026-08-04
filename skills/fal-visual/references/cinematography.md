@@ -14,6 +14,11 @@
 **Ritim kuralı:** ardışık iki sahnede aynı ölçeği kullanma. Aynı ölçek arka arkaya gelirse
 kurgu durgunlaşır ve izleyici sahne değiştiğini fark etmez.
 
+**Tek istisna — match cut.** İki sahneyi kasten eşleştiriyorsan (sorun→çözüm) ölçek ve kadraj
+bölgesi **bilerek aynı** olur; fark eden şey içeriktir ve bu, sert kesime "sihir" hissi verir.
+Bunu yaptığında reçeteye `Match cut notu` olarak yaz — `fal-editor` geçişi buna göre seçer
+(`skills/fal-edit/references/rhythm.md`). Not düşmediysen kural geçerlidir.
+
 **Dikey formatta** (9:16) genel plan ve boy planı zayıftır — kişi küçülür, kadrajın üstü ve altı
 boşa gider. Reels/TikTok için göğüs ve yakın plan ağırlıklı çalış.
 
@@ -41,7 +46,7 @@ Aşırı açılardan kaçın; reklam kısa, izleyicinin yorumlamaya vakti yok.
 
 ## Kamera hareketi niyeti
 
-Sen **niyeti** yazarsın, uygulamayı `fal-motion` çevirir:
+Sen **niyeti** yazarsın, uygulamayı `fal-animator` çevirir:
 
 | Niyet | Anlamı |
 |---|---|

@@ -17,13 +17,17 @@ Hook kuralları:
 
 Beş evre. Sahne sayısı değişse de sıra değişmez:
 
-| Evre | İşi | Tipik pay |
+| Evre | İşi | 60 sn / 6 sahnede |
 |---|---|---|
-| **Hook** | Dikkat çek, sorunu göster | %10 |
-| **Büyütme** | Sorunu izleyicinin kendi hayatına bağla | %20 |
-| **Dönüş** | Ürün girer — çözüm anı | %25 |
-| **Kanıt** | Ürünün işe yaradığını göster, sonucu göster | %30 |
-| **CTA** | Ne yapılacağını söyle | %15 |
+| **Hook** | Dikkat çek, sorunu göster | 1 sahne · 5 sn |
+| **Büyütme** | Sorunu izleyicinin kendi hayatına bağla | 2 sahne · 8 + 9 sn |
+| **Dönüş** | Ürün girer — çözüm anı | 1 sahne · 13 sn |
+| **Kanıt** | Ürünün işe yaradığını göster | 1 sahne · 13 sn |
+| **CTA** | Ne yapılacağını söyle | 1 sahne · 12 sn |
+
+Bu dağılım toplam 60 sn eder ve aşağıdaki aralıklarla uyumludur. Farklı süre veya sahne
+sayısında **aralıkları esas al**, oran hesabı yapma — hook her zaman kısa, dönüş ve kanıt
+her zaman uzundur.
 
 Altı sahnede tipik dağılım: 1 hook, 2 büyütme, 1 dönüş, 1 kanıt, 1 CTA. Kısa sürelerde
 büyütme ve kanıt birer sahneye iner.

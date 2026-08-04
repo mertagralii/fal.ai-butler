@@ -19,14 +19,21 @@ megapiksel başına, token başına. Birimi karıştırmak tahmini on kat şaş�
 |---|---|---|---|
 | Karakter sayfası (image) | 4 görsel | $X/görsel | $A |
 | Sahne anahtar kareleri (image-edit) | 6 görsel | $X/görsel | $B |
-| Sahne videoları (i2v) | 6 × 8 sn | $X/sn | $C |
+| Sahne videoları (i2v) | **klip** sayısı × süre | $X/sn | $C |
 | Seslendirme (TTS) | ~60 sn | $X/1k karakter | $D |
 | Müzik | 60 sn | $X/üretim | $E |
-| Montaj (ffmpeg) | ~60 sn | $0.0002/sn | $F |
+| Montaj (ffmpeg) | ~60 sn | `get_pricing`'den | $F |
 | **Toplam** | | | **$T** |
 
 Sonuna **payın nerede olduğunu** yaz: "maliyetin %N'i video üretiminde". Ucuzlatma konuşması
 buradan başlar.
+
+**Sahne ≠ klip.** Modelin klip süre sınırı aşılıyorsa `fal-animator` sahneyi böler
+(`skills/fal-motion/references/duration-budget.md`) ve o sahne iki üretim düğümü olur. Uzun
+sahneler ve ayrık süre seçenekleri düşünüldüğünde bölünme **istisna değil kural**. Maliyeti
+sahne sayısından değil, `fal-animator`'ın verdiği **zincirleme grafiğindeki gerçek düğüm
+sayısından** hesapla — aksi halde onay kapısındaki rakam düşük çıkar. Aynı şey son kare çıkarma
+düğümleri için de geçerlidir: sayıları klip sayısına bağlıdır, sahne sayısına değil.
 
 ## Gerçekçi beklenti
 

@@ -25,8 +25,10 @@ kompozisyonunda konu ortadaysa çalışır, değilse varyantı üretme ve kullan
 
 ## `ffmpeg-api/compose` track yapısı
 
-Montaj `fal-ai/ffmpeg-api/compose` düğümüyle yapılır (saniyesi ~$0.0002 — maliyet içinde
-ihmal edilebilir). Şemasını **derleme anında oku**, alan adlarını buradan ezberleme.
+Montaj `ffmpeg-api` ailesinin `compose` endpoint'iyle yapılır — altyapı olduğu için adıyla
+anılabilen tek istisna (bkz. `skills/fal-butler/SKILL.md`). **Şemasını ve fiyatını derleme
+anında oku**; alan adlarını ve saniye ücretini buradan ezberleme. Montaj tipik olarak toplam
+maliyetin ihmal edilebilir bir payıdır, ama rakamı `get_pricing` verir.
 
 Kurulacak yapı kavramsal olarak şudur:
 
