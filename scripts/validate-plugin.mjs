@@ -14,9 +14,15 @@ export const PLUGIN_ERROR = {
   BAD_MANIFEST: 'BAD_MANIFEST',
   MISSING_FRONTMATTER: 'MISSING_FRONTMATTER',
   MISSING_FIELD: 'MISSING_FIELD',
+  INVALID_FIELD: 'INVALID_FIELD',
   NAME_MISMATCH: 'NAME_MISMATCH',
   MISSING_SKILL: 'MISSING_SKILL',
+  MISSING_REFERENCE: 'MISSING_REFERENCE',
+  EMPTY_BODY: 'EMPTY_BODY',
 }
+
+/** Claude Code'un kabul ettiği model takma adları. */
+const VALID_MODELS = new Set(['sonnet', 'opus', 'haiku', 'inherit'])
 
 /**
  * Dizini özyinelemeli tarar. Claude Code isim uzaylı komutları alt dizinde tutar
@@ -35,6 +41,22 @@ function mdFiles(dir) {
 
 /** Gövdede geçen `skills/<ad>/` yollarını toplar. */
 const referencedSkills = (text) => [...text.matchAll(/skills\/([a-z0-9-]+)\//g)].map((m) => m[1])
+
+/**
+ * Gövdede adı geçen `skills/<ad>/references/<dosya>.md` yollarını toplar.
+ * Agent'lar bu dosyaları okumaya çalışır; yoksa sessizce başarısız olurlar.
+ */
+const referencedFiles = (text) =>
+  [...text.matchAll(/skills\/([a-z0-9-]+)\/references\/([a-zA-Z0-9._-]+\.md)/g)].map((m) => ({
+    skill: m[1],
+    file: m[2],
+  }))
+
+/** Frontmatter'dan sonraki gövde metnini döndürür. */
+function bodyOf(text) {
+  const match = /^---\r?\n[\s\S]*?\r?\n---\r?\n?([\s\S]*)$/.exec(text)
+  return match ? match[1] : text
+}
 
 export function validatePlugin(root) {
   const errors = []
@@ -87,6 +109,17 @@ export function validatePlugin(root) {
         push(PLUGIN_ERROR.MISSING_SKILL, file, `"${skill}" skill'i anılıyor ama yok.`)
       }
     }
+    // Adı geçen referans dosyası gerçekten var mı — agent onu okumaya çalışacak.
+    for (const ref of referencedFiles(text)) {
+      const target = join(root, 'skills', ref.skill, 'references', ref.file)
+      if (!existsSync(target)) {
+        push(
+          PLUGIN_ERROR.MISSING_REFERENCE,
+          file,
+          `skills/${ref.skill}/references/${ref.file} anılıyor ama dosya yok.`,
+        )
+      }
+    }
   }
 
   // 3. Agent'lar
@@ -103,6 +136,19 @@ export function validatePlugin(root) {
     const expected = basename(file, '.md')
     if (fm.name && fm.name !== expected) {
       push(PLUGIN_ERROR.NAME_MISMATCH, file, `name "${fm.name}" ≠ dosya adı "${expected}".`)
+    }
+    if (fm.model !== undefined && !VALID_MODELS.has(fm.model)) {
+      push(
+        PLUGIN_ERROR.INVALID_FIELD,
+        file,
+        `model "${fm.model}" geçersiz — beklenen: ${[...VALID_MODELS].join(', ')}.`,
+      )
+    }
+    if (fm.tools !== undefined && fm.tools.trim() === '') {
+      push(PLUGIN_ERROR.INVALID_FIELD, file, '"tools" boş — ya araç listesi yaz ya alanı kaldır.')
+    }
+    if (bodyOf(text).trim() === '') {
+      push(PLUGIN_ERROR.EMPTY_BODY, file, 'Agent gövdesi boş — sistem prompt\'u yok.')
     }
     checkSkillRefs(file, text)
   }

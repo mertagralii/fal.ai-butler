@@ -162,6 +162,8 @@ test('agentin andigi olmayan skill yakalanir', () => {
 
 test('agentin andigi var olan skill sorun cikarmaz', () => {
   const dir = scaffold()
+  mkdirSync(join(dir, 'skills', 'ornek-skill', 'references'), { recursive: true })
+  writeFileSync(join(dir, 'skills', 'ornek-skill', 'references', 'a.md'), 'icerik', 'utf8')
   writeFileSync(
     join(dir, 'agents', 'fal-x.md'),
     '---\nname: fal-x\ndescription: d\n---\n\nskills/ornek-skill/references/a.md oku',
@@ -190,6 +192,62 @@ test('alt dizindeki isim uzayli komut da denetlenir', () => {
   mkdirSync(join(dir, 'commands', 'campaign'), { recursive: true })
   writeFileSync(join(dir, 'commands', 'campaign', 'quick.md'), '# frontmatter yok', 'utf8')
   assert.ok(has(validatePlugin(dir), PLUGIN_ERROR.MISSING_FRONTMATTER))
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('olmayan referans dosyasi yakalanir', () => {
+  const dir = scaffold()
+  writeFileSync(
+    join(dir, 'agents', 'fal-x.md'),
+    '---\nname: fal-x\ndescription: d\n---\n\nOku: ${CLAUDE_PLUGIN_ROOT}/skills/ornek-skill/references/hayalet.md',
+    'utf8',
+  )
+  assert.ok(has(validatePlugin(dir), PLUGIN_ERROR.MISSING_REFERENCE))
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('var olan referans dosyasi sorun cikarmaz', () => {
+  const dir = scaffold()
+  mkdirSync(join(dir, 'skills', 'ornek-skill', 'references'), { recursive: true })
+  writeFileSync(join(dir, 'skills', 'ornek-skill', 'references', 'var.md'), 'icerik', 'utf8')
+  writeFileSync(
+    join(dir, 'agents', 'fal-x.md'),
+    '---\nname: fal-x\ndescription: d\n---\n\nOku: ${CLAUDE_PLUGIN_ROOT}/skills/ornek-skill/references/var.md',
+    'utf8',
+  )
+  assert.equal(validatePlugin(dir).valid, true)
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('gecersiz model degeri yakalanir', () => {
+  const dir = scaffold()
+  writeFileSync(join(dir, 'agents', 'fal-x.md'), '---\nname: fal-x\ndescription: d\nmodel: gpt-9\n---\n', 'utf8')
+  assert.ok(has(validatePlugin(dir), PLUGIN_ERROR.INVALID_FIELD))
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('gecerli model degeri sorun cikarmaz', () => {
+  const dir = scaffold()
+  writeFileSync(
+    join(dir, 'agents', 'fal-x.md'),
+    '---\nname: fal-x\ndescription: d\nmodel: sonnet\n---\n\nSen bir agentsin.',
+    'utf8',
+  )
+  assert.equal(validatePlugin(dir).valid, true)
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('bos tools alani yakalanir', () => {
+  const dir = scaffold()
+  writeFileSync(join(dir, 'agents', 'fal-x.md'), '---\nname: fal-x\ndescription: d\ntools:\n---\n', 'utf8')
+  assert.ok(has(validatePlugin(dir), PLUGIN_ERROR.INVALID_FIELD))
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('agent govdesi bos olamaz', () => {
+  const dir = scaffold()
+  writeFileSync(join(dir, 'agents', 'fal-x.md'), '---\nname: fal-x\ndescription: d\n---\n\n   \n', 'utf8')
+  assert.ok(has(validatePlugin(dir), PLUGIN_ERROR.EMPTY_BODY))
   rmSync(dir, { recursive: true, force: true })
 })
 
