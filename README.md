@@ -27,13 +27,19 @@ Plugin **hiçbir modeli çalıştırmaz** — bu bir söz değil, mekanizma: age
 /plugin install fal-butler
 ```
 
-**2. Başla**
+**2. Anahtarını ver ve başla**
+
+<https://fal.ai/dashboard/keys> adresinden anahtarını al, sonra tek komut:
 
 ```
-/fal-butler:setup
+/fal-butler:setup <fal-api-anahtarın>
 ```
 
-Anahtarın yoksa setup seni yönlendirir: <https://fal.ai/dashboard/keys> adresinden alırsın, bana yapıştırırsın, `~/.claude/settings.json` dosyana yazarım. İşletim sistemi ortam değişkeniyle uğraşmana gerek kalmaz ve anahtar tüm projelerde geçerli olur.
+Bu kadar. Anahtar `~/.claude/settings.json` dosyana yazılır, bağlantı test edilir, katalog önbelleğe alınır ve projen taranıp ürün profilin çıkarılır — hepsi tek seferde.
+
+Anahtarı zaten kayıtlıysa argümansız çalıştır: `/fal-butler:setup`
+
+> Anahtar **`~/.claude/settings.json`**'a yazılır — kullanıcı kapsamı, git'e girmez. Projenin içindeki `.claude/settings.json` commit edilir; oraya **asla** yazılmaz. Kayıt sonrası anahtarın tamamı ekrana basılmaz, yalnızca son 4 karakteri gösterilir.
 
 ### Anahtarı kendin koymak istersen
 
@@ -46,8 +52,6 @@ Anahtarın yoksa setup seni yönlendirir: <https://fal.ai/dashboard/keys> adresi
   }
 }
 ```
-
-> **Dikkat:** anahtar **`~/.claude/settings.json`**'a yazılır — bu kullanıcı kapsamıdır, git'e girmez. Projenin içindeki `.claude/settings.json` commit edilir; anahtarı oraya **koyma**.
 
 <details>
 <summary>Ortam değişkenini tercih ediyorsan</summary>
@@ -74,7 +78,7 @@ Hangi yöntemi kullanırsan kullan, `setup` bağlantıyı gerçekten test eder �
 
 | Komut | Ne yapar |
 |---|---|
-| `/fal-butler:setup` | `FAL_KEY` ve MCP bağlantısını doğrular, model kataloğunu önbelleğe alır, projeni tarayıp `product.md` ürün profilini çıkarır. Bir kez çalıştırılır. |
+| `/fal-butler:setup [anahtar]` | Anahtarı kaydeder, MCP bağlantısını doğrular, model kataloğunu önbelleğe alır, projeni tarayıp `product.md` ürün profilini çıkarır. Bir kez çalıştırılır. |
 | `/fal-butler:campaign` | Röportajı yürütür, kurguyu planlar, **onayını ister**, sonra `workflow.json` üretir |
 | `/fal-butler:revise` | Var olan bir `workflow.json`'u ucuzlatır veya kurgusunu değiştirir |
 

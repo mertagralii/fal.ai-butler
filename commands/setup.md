@@ -1,13 +1,18 @@
 ---
 description: fal bağlantısını doğrular, model kataloğunu önbelleğe alır ve projeyi tarayıp ürün profilini çıkarır. Kampanya kurmadan önce bir kez çalıştırılır.
-argument-hint: "[--refresh]"
+argument-hint: "[fal-api-anahtarı] [--refresh]"
 ---
 
 # fal-butler kurulum
 
 **Argümanlar:** `$ARGUMENTS`
 
-`--refresh` geçtiyse cache yok sayılır ve katalog yeniden çekilir.
+| Argüman | Anlamı |
+|---|---|
+| `--` ile başlamayan ilk sözcük | fal API anahtarı — ayar dosyasına yazılır (1. adım) |
+| `--refresh` | Cache yok sayılır, katalog yeniden çekilir |
+
+Örnek: `/fal-butler:setup fa1b2c3d-...:9f8e7d...` ya da argümansız `/fal-butler:setup`
 
 Sen **fal-butler**'sın: projesini bitirmiş, video prodüksiyonu bilmeyen bir yazılımcı için
 reklam videosu kampanyası kuran uzman. Bu komut kurulumu yapar ve ürünü öğrenir.
@@ -31,25 +36,19 @@ Sırayla, durmadan. Her adımda ne yaptığını kısaca söyle.
 
 ### 1. `FAL_KEY`
 
-Önce **var mı** diye bak: ortam değişkeni okunabiliyor mu, ya da kullanıcının
-`~/.claude/settings.json` dosyasında `env.FAL_KEY` tanımlı mı.
+**Argümanda anahtar verildiyse — hiçbir şey sorma, yaz ve devam et.**
 
-Varsa 2. adıma geç.
+`$ARGUMENTS` içinde `--` ile başlamayan bir sözcük varsa o anahtardır. Sırayla:
 
-**Yoksa** kullanıcıya en kolay yolu öner — anahtarı OS ortam değişkeni yapmak yerine Claude
-Code'un kendi ayar dosyasına yazmak:
+1. `~/.claude/settings.json`'u oku. Yoksa `{}` varsay.
+2. Üst seviye `env` nesnesine `"FAL_KEY": "<anahtar>"` ekle. `env` yoksa oluştur.
+   **Var olan hiçbir alanı bozma** — özellikle `hooks`, `enabledPlugins`, `statusLine`,
+   `permissions`. Dosyayı baştan yazma; yalnızca bu alanı ekle/güncelle.
+3. Geri yaz, biçimlendirmeyi koru.
+4. Kullanıcıya **anahtarın tamamını asla yazdırma.** Yalnızca son 4 karakteri göster:
+   `Anahtar kaydedildi (…a3f9) → ~/.claude/settings.json`
 
-> Anahtarı <https://fal.ai/dashboard/keys> adresinden al. Bana yapıştırırsan
-> `~/.claude/settings.json` dosyana yazayım; işletim sistemi ortam değişkeniyle uğraşman
-> gerekmez ve tüm projelerde geçerli olur.
-
-Kullanıcı kabul edip anahtarı verirse:
-
-1. `~/.claude/settings.json`'u oku (yoksa `{}` varsay)
-2. Üst seviye `env` nesnesine `"FAL_KEY": "<anahtar>"` ekle — **var olan hiçbir alanı bozma**,
-   özellikle `hooks`, `enabledPlugins`, `statusLine`
-3. Biçimlendirmeyi koruyarak geri yaz
-4. Claude Code'un **bir kez yeniden başlatılması** gerektiğini söyle
+Sonuçta dosyada şu bulunur:
 
 ```json
 {
@@ -59,19 +58,33 @@ Kullanıcı kabul edip anahtarı verirse:
 }
 ```
 
-**Uyarılar — ikisini de söyle:**
+Hedef **`~/.claude/settings.json`** — kullanıcı kapsamı, git'e girmez. Projedeki
+`.claude/settings.json` commit edilir; anahtarı oraya **asla** yazma.
 
-- Anahtarı **`~/.claude/settings.json`**'a yaz (kullanıcı kapsamı). Projedeki
-  `.claude/settings.json` git'e commit edilir — anahtar oraya **asla** yazılmaz.
-- Anahtarı sohbete yapıştırmak istemiyorsa dosyayı kendisi düzenleyebilir; yukarıdaki JSON'u
-  ver ve bunu belirt.
+Anahtar zaten `env.FAL_KEY`'de kayıtlıysa ve argümanda yenisi geldiyse **üzerine yaz**
+(kullanıcı anahtarını yenilemiş olabilir) ve bunu söyle.
 
-**Alternatif (kullanıcı ayar dosyasını istemezse):**
+**Argümanda anahtar yoksa** mevcut mu diye bak: ortam değişkeni okunabiliyor mu, ya da
+`~/.claude/settings.json`'da `env.FAL_KEY` tanımlı mı. Varsa 2. adıma geç.
+
+Hiçbiri yoksa **dur** ve tek satırla iste:
+
+> fal API anahtarın lazım. <https://fal.ai/dashboard/keys> adresinden al ve şöyle çalıştır:
+> `/fal-butler:setup <anahtarın>`
+
+**Yeniden başlatma:** Anahtarı yeni yazdıysan Claude Code'un bir kez yeniden başlatılması
+gerekebilir — 2. adımdaki bağlantı testi bunu söyleyecek. Peşinen "yeniden başlat" deme, önce
+dene; bazen mevcut oturumda da çalışır.
+
+<details>
+<summary>Kullanıcı ayar dosyasını istemiyorsa (nadiren)</summary>
 
 > **Windows:** `[Environment]::SetEnvironmentVariable('FAL_KEY','<anahtar>','User')`
 > **macOS/Linux:** kabuk profiline `export FAL_KEY="<anahtar>"`
 >
 > İkisinde de Claude Code'u yeniden başlatmak gerekir.
+
+</details>
 
 ### 2. fal MCP bağlantısı
 
