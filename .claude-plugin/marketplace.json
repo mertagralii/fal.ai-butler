@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "fal-butler",
-      "version": "0.4.0",
+      "version": "0.4.1",
       "description": "Reklam videosu kampanyası kuran plugin: projeni okur, ürününü anlar, kısa bir röportajla kurguyu çıkarır ve fal.ai'a import edilmeye hazır bir workflow.json üretir. Sahneler birbirine zincirlenir, karakter tutarlı kalır. Hiçbir model çalıştırmaz — üretim ve maliyet kararı sende.",
       "author": {
         "name": "Mert Ağralı"

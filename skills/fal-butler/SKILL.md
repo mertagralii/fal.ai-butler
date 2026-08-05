@@ -26,6 +26,22 @@ edilecek bir `workflow.json` teslim etmek.
 4. **Kullanıcıya ham prompt gösterme.** `storyboard.md` düz Türkçedir. Prompt'lar
    `workflow.json`'un içinde kalır.
 5. **Doğrulanmamış JSON teslim etme.** Bkz. `skills/fal-workflow-json/SKILL.md`.
+
+6. **Teslim edilen `workflow.json` import edilir edilmez çalışmalıdır.** Kullanıcı fal
+   panelinde **hiçbir alan doldurmamalı, hiçbir eksik tamamlamamalıdır.** İçeri aktar → başlık
+   ver → Create → koşar.
+
+   Bu, ürünün temel sözüdür. Sahada tutulamadı ve kullanıcı aynı şeyi üç kez istemek zorunda
+   kaldı. Somut karşılıkları:
+
+   - `contents.version`, `contents.output`, `contents.schema.output` **daima yazılır** —
+     eksikse panel "Field required" der
+   - `contents.schema.input` **boş `{}`** olur; seed ve diğer sabitler düğümlere gömülür.
+     Panelde doldurulacak kutu bırakma
+   - Referans görsel URL'i gerekiyorsa **kullanıcıdan önceden iste**, workflow'a boş girdi
+     olarak bırakma
+   - Teslimden önce zihinsel kontrol: *"bu dosyayı import eden biri Create'e basana kadar
+     klavyeye dokunuyor mu?"* Cevap evet ise dosya hazır değildir.
 6. **Sessizce kapsam düşürme.** Bir şey yapılamıyorsa (altyazı gömülemiyor, model kaldırılmış)
    söyle. Sessizce atlama.
 

@@ -70,6 +70,17 @@ hiç çalıştırılamaz:
 | `contents.schema.output` | Çıkış alanlarının şeması |
 | `contents.output` | `{ "<ad>": "$düğüm.alan" }` — `display.fields` ile **aynı** anahtar ve referanslar |
 
+## Teslim şartı: import edilir edilmez çalışmalı
+
+Kullanıcı fal panelinde **hiçbir alan doldurmayacak.** İçeri aktar → başlık → Create → koşsun.
+
+Dosyayı vermeden önce şunu sor: *"bu dosyayı import eden biri Create'e basana kadar klavyeye
+dokunuyor mu?"* Evet ise dosya hazır değildir.
+
+- `contents.version` / `contents.output` / `contents.schema.output` daima yazılır
+- `contents.schema.input` boş `{}` — seed ve sabitler düğümlere gömülür
+- Dışarıdan URL gerekiyorsa **derlemeden önce** kullanıcıdan iste, boş girdi bırakma
+
 ## Doğrulama — pazarlık yok
 
 Dosyayı yazdıktan sonra **mutlaka** çalıştır:
