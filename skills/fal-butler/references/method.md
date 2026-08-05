@@ -50,14 +50,29 @@ kullanıcı "sen karar ver" diyebilir. `brief.md` varsa önceki cevaplar varsay�
 1. **Amaç** — lansman / yeni özellik / indirim / marka bilinirliği
 2. **Platform + süre** — süreye göre sahne sayısı öner: kabaca 10 saniyeye bir sahne
 3. **Anlatım biçimi** — karakterli hikaye / ürün-ekran odaklı / soyut-motion
-4. **Karakter** *(yalnızca karakterli seçildiyse)* — cinsiyet, yaş aralığı, görünüm, kıyafet, ortam
-5. **Ton** — enerjik / sakin / esprili / kurumsal
-6. **Dil** — TR / EN / ikisi
-7. **Kapsam** — seslendirme? müzik? altyazı? **Her biri ayrı ayrı sorulur ve kapatılabilir.**
-8. **CTA** — izleyici ne yapsın
 
-`--quick` bayrağı: yalnızca 1, 2 ve 8'i sor; kalanını `product.md`'den türet ve türettiklerini
-planda açıkça listele ki kullanıcı itiraz edebilsin.
+**Tam yöntem `references/interview.md`'dedir — altı aşama:**
+
+| Aşama | İçerik |
+|---|---|
+| 1 | Kampanya çerçevesi — amaç, platform, süre, anlatım biçimi |
+| 2 | **Karakter** (2A) / **arayüz** (2B) / **görsel dil** (2C) — biçime göre dallanır |
+| 3 | **Mekan ve sahne yapısı** — kaç sahne, tek mekan mı, mekanı anlat |
+| 4 | Ton, dil, kapsam (seslendirme/müzik/altyazı ayrı ayrı) |
+| 5 | CTA ve reklamda yasaklar |
+| 6 | Kalite–bütçe tercihi |
+
+Karakter ve mekan adımları **rehberli serbest metindir**: ne yazılacağı tablo hâlinde gösterilir,
+altında dolu bir örnek verilir, sonra yalnızca eksikler tek tek sorulur.
+
+Sahada "kadın, 30'larında, ofiste" gibi kısa tarifler etnik köken kaymasına ve ortam sapmasına
+yol açtı. Bu yüzden **etnik köken/coğrafya** ve **negatif tanımlar** ("ikinci monitör olmasın")
+asla boş bırakılmaz.
+
+Röportaj sonunda toparla ve düzeltme şansı ver.
+
+`--quick` bayrağı: yalnızca Aşama 1 ve CTA'yı sor; kalanını `product.md`'den türet ve
+türettiklerini planda açıkça listele ki kullanıcı itiraz edebilsin.
 
 ### 3. Ekip zinciri
 

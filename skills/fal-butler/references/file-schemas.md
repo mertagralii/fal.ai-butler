@@ -54,16 +54,24 @@ Röportaj cevapları. Slug: `YYYY-MM-DD-<kısa-ad>`.
 | Süre | 60 sn | kullanıcı |
 | Sahne sayısı | 6 | önerildi, onaylandı |
 | Anlatım biçimi | karakterli hikaye | kullanıcı |
+| **Mekan** | **tek mekan — ev ofisi** | kullanıcı |
 | Ton | sıcak, esprili | kullanıcı |
 | Dil | TR | kullanıcı |
-| Seslendirme | var | kullanıcı |
+| Seslendirme | var — metni plugin yazacak | kullanıcı |
 | Müzik | var | kullanıcı |
 | Altyazı | var | kullanıcı |
 | CTA | "Ücretsiz dene" | kullanıcı |
+| **Kalite tercihi** | **tahmini gördükten sonra karar** | kullanıcı |
 | Seed | 731914 | üretildi |
 
 ## Karakter tarifi (kullanıcının kendi sözleri)
-> <birebir alıntı>
+> <birebir alıntı — yorumlanmadan, kısaltılmadan>
+
+## Mekan tarifi (kullanıcının kendi sözleri)
+> <birebir alıntı — negatif tanımlar dahil: "ikinci monitör olmasın" gibi>
+
+## Reklamda yasaklar
+<kullanıcının saydıkları; product.md'dekiler teyit edildiyse "product.md ile aynı" yaz>
 
 ## Sabit karakter bloğu (İngilizce)
 <fal-promptsmith'in ürettiği blok, BİREBİR. Her sahne prompt'una değişmeden yapıştırılır.>

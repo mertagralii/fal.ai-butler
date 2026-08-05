@@ -37,24 +37,27 @@ mutlak yolunu ve okuması gereken referans dosyalarını **adıyla** ilet.
 
 ## 2. Röportaj
 
-Soruları **tek tek** sor (AskUserQuestion). Her birinin `product.md`'den türetilmiş bir
-varsayılanı olsun ve kullanıcı "sen karar ver" diyebilsin.
+**`${CLAUDE_PLUGIN_ROOT}/skills/fal-butler/references/interview.md` dosyasını oku ve onu
+uygula.** Soruların sırası, sözcükleri, tabloları ve örnekleri orada.
 
-1. **Amaç** — lansman / yeni özellik / indirim / marka bilinirliği
-2. **Platform + süre** — süreye göre sahne sayısı öner (kabaca 10 sn'ye bir sahne)
-3. **Anlatım biçimi** — karakterli hikâye / ürün-ekran odaklı / soyut-motion
-4. **Karakter** *(yalnızca karakterli seçildiyse)* — cinsiyet, yaş, görünüm, kıyafet, ortam
-5. **Ton** — enerjik / sakin / esprili / kurumsal
-6. **Dil** — TR / EN / ikisi
-7. **Kapsam** — seslendirme? müzik? altyazı? **Her biri ayrı ayrı, kapatılabilir**
-8. **CTA** — izleyici ne yapsın
+Altı aşama: çerçeve → karakter/arayüz/görsel dil → mekan ve sahne yapısı → ton-dil-kapsam →
+CTA ve yasaklar → kalite-bütçe.
 
-Aynı slug'da `brief.md` varsa önceki cevapları varsayılan olarak getir.
+Özet kurallar:
 
-**`--quick`:** yalnızca 1, 2 ve 8'i sor. Kalanını `product.md`'den türet ve **türettiklerini
+- Sorular **tek tek** gelir; hepsini bir listede sunma.
+- **Karakter ve mekan adımları rehberli serbest metindir.** Önce ne yazılacağını tablo hâlinde
+  göster, altına dolu bir örnek koy, sonra yalnızca eksikleri sor. Boş bir kutu kullanıcıya
+  hiçbir şey sormaz.
+- **Etnik köken/coğrafya ve negatif tanımlar boş bırakılmaz.** Sahada bunlar boş kaldığı için
+  karakter hedef kitleye benzemedi ve ortam sahneden sahneye kaydı.
+- **Mekan tek mi, değişiyor mu** sorusu atlanmaz; tek mekan varsayılandır.
+- Kullanıcının kendi sözlerini **birebir** `brief.md`'ye yaz; yorumlama.
+- Aynı slug'da `brief.md` varsa önceki cevapları varsayılan olarak getir.
+- Röportaj sonunda **özetle ve düzeltme şansı ver**.
+
+**`--quick`:** yalnızca Aşama 1 ve CTA. Kalanını `product.md`'den türet ve **türettiklerini
 planda açıkça listele** ki kullanıcı itiraz edebilsin.
-
-Karakter tarifini kullanıcının **kendi sözleriyle** not al; ekibe böyle gidecek.
 
 ## 3. Ekip zinciri
 
