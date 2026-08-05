@@ -20,9 +20,37 @@ Plugin **hiçbir modeli çalıştırmaz** — bu bir söz değil, mekanizma: age
 
 ## Kurulum
 
-**1. fal API anahtarı al**
+**1. Plugin'i kur**
 
-<https://fal.ai/dashboard/keys> adresinden anahtar oluştur ve `FAL_KEY` olarak tanımla.
+```
+/plugin marketplace add mertagralii/fal.ai-butler
+/plugin install fal-butler
+```
+
+**2. Başla**
+
+```
+/fal-butler:setup
+```
+
+Anahtarın yoksa setup seni yönlendirir: <https://fal.ai/dashboard/keys> adresinden alırsın, bana yapıştırırsın, `~/.claude/settings.json` dosyana yazarım. İşletim sistemi ortam değişkeniyle uğraşmana gerek kalmaz ve anahtar tüm projelerde geçerli olur.
+
+### Anahtarı kendin koymak istersen
+
+`~/.claude/settings.json` dosyasına şu bloğu ekle ve Claude Code'u bir kez yeniden başlat:
+
+```json
+{
+  "env": {
+    "FAL_KEY": "senin-anahtarin"
+  }
+}
+```
+
+> **Dikkat:** anahtar **`~/.claude/settings.json`**'a yazılır — bu kullanıcı kapsamıdır, git'e girmez. Projenin içindeki `.claude/settings.json` commit edilir; anahtarı oraya **koyma**.
+
+<details>
+<summary>Ortam değişkenini tercih ediyorsan</summary>
 
 ```powershell
 # Windows — kalıcı olarak kullanıcı ortamına yazar
@@ -34,20 +62,11 @@ Plugin **hiçbir modeli çalıştırmaz** — bu bir söz değil, mekanizma: age
 export FAL_KEY="senin-anahtarin"
 ```
 
-> Windows'ta `$env:FAL_KEY = "..."` yalnızca o pencerede yaşar ve **çalışmakta olan Claude Code onu görmez.** Yukarıdaki komutu kullan ve Claude Code'u yeniden başlat.
+Windows'ta `$env:FAL_KEY = "..."` yalnızca o pencerede yaşar ve **çalışmakta olan Claude Code onu görmez.** İki yöntemde de Claude Code'u yeniden başlatmak gerekir.
 
-**2. Plugin'i kur**
+</details>
 
-```
-/plugin marketplace add mertagralii/fal.ai-butler
-/plugin install fal-butler
-```
-
-**3. Başla**
-
-```
-/fal-butler:setup
-```
+Hangi yöntemi kullanırsan kullan, `setup` bağlantıyı gerçekten test eder — anahtar fal'a ulaşmıyorsa sana söyler ve diğer yönteme geçmeni önerir.
 
 ---
 

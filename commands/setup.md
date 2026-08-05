@@ -31,19 +31,63 @@ Sırayla, durmadan. Her adımda ne yaptığını kısaca söyle.
 
 ### 1. `FAL_KEY`
 
-Ortam değişkeni var mı kontrol et. Yoksa **dur** ve şunu söyle:
+Önce **var mı** diye bak: ortam değişkeni okunabiliyor mu, ya da kullanıcının
+`~/.claude/settings.json` dosyasında `env.FAL_KEY` tanımlı mı.
 
-> Anahtarı <https://fal.ai/dashboard/keys> adresinden al, sonra:
+Varsa 2. adıma geç.
+
+**Yoksa** kullanıcıya en kolay yolu öner — anahtarı OS ortam değişkeni yapmak yerine Claude
+Code'un kendi ayar dosyasına yazmak:
+
+> Anahtarı <https://fal.ai/dashboard/keys> adresinden al. Bana yapıştırırsan
+> `~/.claude/settings.json` dosyana yazayım; işletim sistemi ortam değişkeniyle uğraşman
+> gerekmez ve tüm projelerde geçerli olur.
+
+Kullanıcı kabul edip anahtarı verirse:
+
+1. `~/.claude/settings.json`'u oku (yoksa `{}` varsay)
+2. Üst seviye `env` nesnesine `"FAL_KEY": "<anahtar>"` ekle — **var olan hiçbir alanı bozma**,
+   özellikle `hooks`, `enabledPlugins`, `statusLine`
+3. Biçimlendirmeyi koruyarak geri yaz
+4. Claude Code'un **bir kez yeniden başlatılması** gerektiğini söyle
+
+```json
+{
+  "env": {
+    "FAL_KEY": "..."
+  }
+}
+```
+
+**Uyarılar — ikisini de söyle:**
+
+- Anahtarı **`~/.claude/settings.json`**'a yaz (kullanıcı kapsamı). Projedeki
+  `.claude/settings.json` git'e commit edilir — anahtar oraya **asla** yazılmaz.
+- Anahtarı sohbete yapıştırmak istemiyorsa dosyayı kendisi düzenleyebilir; yukarıdaki JSON'u
+  ver ve bunu belirt.
+
+**Alternatif (kullanıcı ayar dosyasını istemezse):**
+
+> **Windows:** `[Environment]::SetEnvironmentVariable('FAL_KEY','<anahtar>','User')`
+> **macOS/Linux:** kabuk profiline `export FAL_KEY="<anahtar>"`
 >
-> **Windows:** `[Environment]::SetEnvironmentVariable('FAL_KEY','<anahtar>','User')` — sonra
-> Claude Code'u **yeniden başlat**; çalışan süreç yeni ortam değişkenini görmez.
->
-> **macOS/Linux:** `export FAL_KEY="<anahtar>"` — kalıcı olması için kabuk profiline ekle.
+> İkisinde de Claude Code'u yeniden başlatmak gerekir.
 
 ### 2. fal MCP bağlantısı
 
-Ucuz bir okuma çağrısıyla dene (model araması). Başarısızsa `cache-discipline.md`'deki hata
-tablosuna göre davran.
+Ucuz bir okuma çağrısıyla dene (model araması).
+
+**Bu adım aynı zamanda 1. adımın doğrulamasıdır.** `${FAL_KEY}` genişletmesinin
+`~/.claude/settings.json`'daki `env` bloğunu görüp görmediği dokümante edilmiş bir davranış
+değil — varsayma, **test et**:
+
+| Sonuç | Ne demek | Ne yap |
+|---|---|---|
+| Bağlantı kuruldu | Ayar dosyası yöntemi çalışıyor | Devam et |
+| Yeniden başlatmadan sonra hâlâ kimlik hatası | Genişletme ayar dosyasını görmüyor | Kullanıcıya söyle, 1. adımdaki **OS ortam değişkeni** yöntemine geç. Suçu kullanıcıya atma — bu bizim bilmediğimiz bir davranıştı |
+| 401 | Anahtar yanlış veya süresi dolmuş | Anahtarı sorgula, yöntemi değil |
+
+Diğer hata durumları için `cache-discipline.md`'deki tabloya göre davran.
 
 ### 3. Katalog
 
