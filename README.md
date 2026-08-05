@@ -163,6 +163,43 @@ Tek istisna `ffmpeg-api` ailesidir — o bir üretim modeli değil, montaj altya
 
 ---
 
+## Sorun giderme: 401 alıyorsan
+
+İki bambaşka sorun aynı kodla geliyor. **fal'ın mesajını oku:**
+
+| Mesaj | Anlamı |
+|---|---|
+| `malformed Authorization header` | Anahtar Claude Code sürecine **ulaşmıyor** — başlık boş gitti |
+| `Invalid API key` | Anahtar ulaşıyor ama fal kabul etmiyor — yanlış veya süresi dolmuş |
+
+### "malformed Authorization header" — Windows'un klasik tuzağı
+
+`[Environment]::SetEnvironmentVariable(...,'User')` yalnızca **kayıt defterine** yazar. Zaten açık olan bir terminal kendi ortam bloğunu başladığı andan taşır ve içinden başlattığı her programa o **eski** bloğu devreder.
+
+Yani **Claude Code'u kapatıp açmak yetmez** — onu doğuran terminal hâlâ eski ortamda.
+
+Çözüm sırası:
+
+1. **En kolayı:** `/fal-butler:setup <anahtarın>` çalıştır. Anahtar `~/.claude/settings.json`'a yazılır, işletim sistemi ortamına hiç bağlı kalmazsın, tuzak tamamen ortadan kalkar.
+2. Ortam değişkeninde ısrar ediyorsan: **tüm** terminal pencerelerini kapat, yeni bir PowerShell aç ve Claude Code'u başlatmadan önce doğrula — `$env:FAL_KEY.Length` anahtarın uzunluğunu yazmalı.
+3. Hemen lazımsa: `$env:FAL_KEY = [Environment]::GetEnvironmentVariable('FAL_KEY','User'); claude`
+
+### Anahtarın geçerli mi — ücretsiz test
+
+Model çalıştırmadan, yalnızca JSON-RPC el sıkışmasıyla. **Para harcamaz:**
+
+```powershell
+$k = [Environment]::GetEnvironmentVariable('FAL_KEY','User')
+$body = '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"t","version":"1"}}}'
+Invoke-WebRequest -Uri 'https://mcp.fal.ai/mcp' -Method Post -Headers @{
+  'Authorization'='Key '+$k; 'Accept'='application/json, text/event-stream'; 'Content-Type'='application/json'
+} -Body $body -UseBasicParsing | Select-Object -ExpandProperty StatusCode
+```
+
+`200` → anahtar geçerli, sorun taşımada. `401` → anahtar geçersiz.
+
+---
+
 ## Bilinen sınır: import adımı
 
 fal, workflow JSON'unun panele **nasıl import edileceğini dokümante etmiyor**; Platform API'leri workflow için yalnızca okuma (list + get) veriyor, oluşturma endpoint'i yok.
