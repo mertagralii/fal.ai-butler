@@ -68,6 +68,24 @@ tek geri dönüştür ve tamamen önlenebilir.
   sessizlik izleyiciye "video bitti" hissi verir.
 - **Görüntüyü tekrarlama.** Ekranda dağınık masa varsa "masası dağınıktı" deme; görüntünün
   söylemediğini söyle.
+
+### Orta bölüm özellik listesi olmayacak
+
+**Sahada çıkan kusur:** "seslendirilen metin yeterli değil, çok klasik olmuş."
+
+Hook iyiydi ama gelişme bölümü ürün broşürü diline kaydı:
+
+> ✗ "DevCareerAI, CV'ne tek bir yapay zeka değil, bir uzman paneli gibi bakıyor…"
+
+Bu cümle bir özellik sıralaması. İzleyici reklamda özellik dinlemez, **bir an** yaşar.
+
+Kural: ürünü **karakterin yaşadığı tek bir an** üzerinden anlat.
+
+> ✓ "Puan 41 çıktı. Altında üç madde vardı — neyi eksik yazdığımı ilk kez biri söylüyordu."
+
+**Somutluk kuralı:** soyut vaat yerine **ekranda görünen tek bir gerçek detay** kullan — bir
+sayı, bir cümle, bir işaret. "Uzman paneli gibi bakıyor" soyuttur; "puan 41" somuttur ve
+görüntüyle eşleşir.
 - **Cümleleri kısa kur.** Yan cümleli uzun yapılar seslendirmede boğulur.
 - **Sahne 1'de ürün adını anma.** İlk anış dönüş sahnesinde olur.
 

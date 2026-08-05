@@ -99,9 +99,35 @@ Kullanıcıya düz Türkçe bir plan sun:
 
 Sonra onay iste. Beğenmezse ilgili agent'tan itibaren yeniden çalıştır — baştan başlama.
 
+### 4b. Seslendirme metni ayrı bir onay noktasıdır
+
+Metin şu an storyboard'un içinde geçiyor ve **gözden kaçıyor.** Sahada "metin çok klasik olmuş"
+şikâyeti tam da bu yüzden üretim sonrası geldi.
+
+Onay kapısında metni **ayrıca** göster ve açıkça sor:
+
+> Seslendirme metni:
+> "…"
+>
+> Bu metin sana klişe geliyor mu? Orta bölüm özellik sıralamasına kaymış olabilir —
+> değiştirmemi istersen söyle.
+
 ### 5. Yazma
 Onaydan sonra sırayla: `brief.md`, `storyboard.md`, `workflow.json`, `cost.md`.
 `workflow.json` doğrulayıcıdan geçmeden teslim etme.
+
+### 5b. Üretimi aşamalandırmayı öner
+
+Kullanıcı fal'da tek seferde her şeyi çalıştırırsa, beğenmediği bir karakter ya da ses için
+**tüm video bütçesini** harcamış olur. Teslim mesajında şu sırayı öner:
+
+1. **Önce yalnızca karakter sayfası ve TTS örneğini çalıştır** — birkaç kuruş.
+   Karakter doğru mu, ses insan gibi mi, telaffuz tutuyor mu?
+2. Beğenmezse `/fal-butler:revise` ile düzelt — video düğümlerine hiç para harcanmadan.
+3. Onayladıktan sonra video düğümlerini çalıştır — bütçenin %80'i orada.
+
+Video üretimi baskın kalem; karakter ve ses ise ondan iki mertebe ucuz. Sıralamayı tersine
+çevirmek en pahalı hatadır.
 
 ### 6. Teslim
 

@@ -10,6 +10,7 @@ Bunların hepsi doldurulur ve **hiçbir sahnede değişmez**:
 
 | Alan | Örnek | Neden sabit |
 |---|---|---|
+| **Etnik köken / coğrafya** | **"Türk, Akdeniz hatları, buğday teni"** | **Belirtilmezse model varsayılanına düşer.** Sahada hedef kitle Türk geliştiricilerdi ama çıktı belirgin Doğu Asyalı bir karakter oldu — prompt'ta coğrafya hiç yazmamıştı. Ten tonu tarif etmek yetmiyor; **coğrafyayı açıkça yaz** |
 | Yaş aralığı | 30–34 | "Genç kadın" her sahnede farklı yaş üretir |
 | Saç | Omuz hizası, koyu kahve, düz, ortadan ayrık | Modelin en çok kaydırdığı özellik |
 | Yüz | Oval, açık ten, çilsiz, hafif belirgin elmacık | Referans görselle desteklenir |

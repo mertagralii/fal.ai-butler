@@ -41,6 +41,29 @@ Yapay görselin "yapay" görünmesinin ikinci sebebi düzlüktür. Üç katman k
 
 Ön plan katmanı en çok atlanan ve en çok işe yarayan detaydır.
 
+## Ürün ekranı — gerçek görseli referans olarak kullan
+
+Sahada en yüksek etkili düzeltme bu. Ürünün göründüğü kare, reklamın **tek anlatım anıydı** ve
+okunaksız çıktı: puan göstergesi yanlış monitöre kaydı, metinler bulanıklaştı, arayüz uydurma
+oldu.
+
+**Kullanıcının gerçek ekran görüntüsü varsa** onu image-edit düğümüne referans görsel olarak
+ver — bu modeller genelde birden çok referans kabul eder (`image_urls`). Model uydurmak yerine
+o arayüzü yeniden üretmeye çalışır; bozuk yazı riski büyük ölçüde düşer.
+
+Görsel bir URL'e konmalıdır (plugin dosya yüklemez — bkz.
+`skills/fal-workflow-json/references/schema.md`). Kullanıcıya bunu **öner**, kendiliğinden
+varsayma.
+
+**Alternatif:** arayüzü tipografide güçlü ayrı bir modelle düz görsel olarak üret, sonra
+montajda bindir. Ama `compose`'un `type: "image"` track'inde konum/opacity dokümante değil —
+bunu denemeden vaat etme (`skills/fal-edit/references/compose-schema.md`).
+
+**Ekran içeriği sahnenin işleviyle çelişmesin.** Sahada sahne 1'in ekranında yeşil onay işareti
+vardı — görsel dil "başarı" diyordu, oysa sahnenin işlevi "başvurdun, geri dönüş yok"tu. Bu bir
+model hatası değil, **reçete hatasıdır**: ekranda ne göründüğünü yazarken sahnenin duygusunu
+kontrol et.
+
 ## Ürün-ekran kadrajı
 
 - **Ekranı düz karşıdan ver** ya da hafif açıyla — ama arayüz metni okunur kalsın.

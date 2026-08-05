@@ -68,6 +68,27 @@ belirle:
 kısaltmalar bozulabilir. Ürün adı İngilizceyse ve model Türkçe okuyorsa, adı okunuşuyla yazmayı
 değerlendir ve bunu reçeteye not düş.
 
+### Doğallık şemadan okunamaz — örnekle
+
+**Sahada çıkan kusur:** "seslendirme sesi insan sesi gibi olmalı, çok iyi değil."
+
+Kök sebep bir seçim hatasıydı: model, şemasında `tr` dil kodu **açıkça listelendiği** için
+seçildi. Diğer adaylar Türkçe desteği şemadan doğrulanamadığı için elendi. Yani seçim
+**doğrulanabilirlik** ölçütüyle yapıldı, **doğallık** ölçütüyle değil.
+
+Ama ses kalitesi bir şema alanı değildir. Kural:
+
+1. **İki aday belirle**, birini şema güvencesine, diğerini bilinen doğallığına göre.
+2. `fal-compiler`'a **örnek dinletme adımı** öner: tek bir kısa cümle, her iki modelle. Birkaç
+   kuruş tutar ve tüm reklamın tonunu belirler.
+3. Örnek üretimi **onay kapısında** kullanıcıya sun — bkz.
+   `skills/fal-butler/references/method.md` → aşamalı üretim.
+
+**Türkçe desteklediği bilinen aday aileler** (katalogdan doğrula, endpoint adı değişebilir):
+MiniMax `speech-*-hd`, ElevenLabs `tts/*` (şemada serbest `language_code`, pratikte Türkçe
+çalışıyor), Inworld TTS. Şemada `tr` görmüyorsan bu, desteklenmediği anlamına gelmez —
+serbest dil kodu alan modeller de var.
+
 ## Miksaj planı
 
 `fal-editor`'a teslim edeceğin ses kanalı yapısı:

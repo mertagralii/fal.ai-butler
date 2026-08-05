@@ -98,6 +98,20 @@ Metin track tipi yoktur. **`.srt` bir yedek değil, tek seçenektir.** `subtitle
 "şemadan kontrol et" adımı artık gereksiz — cevap kesin olarak hayır. Kullanıcıya bunu
 açıkça söyle.
 
+### 4. Çıktıyı 720p'ye düşürüyor
+
+**Sahada ölçüldü:** klipler 1080×1920 üretildi, `compose` çıktısı **720×1280** geldi. Dosya
+boyutu da düştü (17,9 MB girdi → 3,75 MB çıktı) — yani yeniden kodluyor.
+
+Bunun sonucu: **anahtar kareleri 1080p üretmek final kaliteyi yükseltmiyor.** Kullanıcı
+"kalite iyi değil" derse ölçülebilir sebebin bir kısmı budur.
+
+Kullanıcıya baştan söyle. 1080p final gerekiyorsa `compose` yerine kliplerin ayrı ayrı teslim
+edilip yerel bir düzenleyicide birleştirilmesi gerekir — bu plugin'in kapsamı dışında ama
+dürüst seçenek.
+
+### Bilinmeyen
+
 `type: "image"` track'iyle PNG overlay yapılıp yapılamayacağı **bilinmiyor** — konum ve opacity
 alanları dokümante değil. Ekran içi metinler (CTA, sayaç) bu yüzden **anahtar karelerin içinde**
 üretilir; bu da render sonrası gözle yazım kontrolü gerektirir.

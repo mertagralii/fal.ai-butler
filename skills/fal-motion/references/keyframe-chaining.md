@@ -27,6 +27,55 @@ Girdi: karakter sayfası görselleri (referans) + `fal-dop`'un o sahneye ait gö
 
 Anahtar kareyi image-to-video ile sahneye çevir. Hareket reçetesi `motion-prompting.md`'ye göre.
 
+## ÖNCE OKU: zincir sapması gerçek bir risk
+
+**Sahada ölçüldü (2026-08-05, 5 klip):** kimlik korundu — yüz hattı ve gözlük beş klipte de
+aynı kaldı. **Ortam korunmadı:**
+
+| Klip | Sapma |
+|---|---|
+| 1 | Doğru: sade duvar, tek laptop, düz gri sweatshirt |
+| 3 | Duvar taşa döndü, **ikinci monitör belirdi** (bible'da yasaktı), kıyafet desenlendi |
+| 4 | **Tam bozulma:** yüzde ve kıyafette neon gökkuşağı, kompozisyon dağıldı |
+| 5 | Taş duvar ve ikinci monitör kalıcılaştı, kadraja masa lambası girdi |
+
+Sebep: her anahtar kare bir öncekinin **üretilmiş** karesinden besleniyor; hata katlanarak
+büyüyor. **Üçten fazla halka zincirlenirse ortam ve kıyafet sapması beklenmelidir.**
+
+Kural: **kimlik zincirle korunur, çevre korunmaz.** Çevreyi korumak için aşağıdaki
+seçeneklerden birini kullan.
+
+## Üç mimari — kampanyaya göre seç
+
+### A. Zincirsiz (varsayılan öneri)
+
+Her anahtar kare **yalnızca karakter sayfasından** türer. Sahneler arası ortam küçük
+farklılıklar gösterebilir ama **birikimli bozulma olmaz**. `extract-frame` düğümleri tamamen
+kalkar, düğüm sayısı ve maliyet düşer.
+
+**3'ten fazla klip varsa bunu seç.**
+
+### B. Melez — ortam referansı ile (en iyi denge)
+
+Karakter sayfasına ek olarak bir **ortam referans karesi** üret (masa, duvar, kupa, monitör
+düzeni) ve her anahtar kareye **iki referansı birden** ver: karakter + ortam.
+
+Zincir kurulmaz, sapma birikmez, ama çevre de sabitlenir. Maliyeti tek bir ek görsel.
+
+### C. Çoklu referanslı video modeli
+
+Bazı video modelleri (ör. `reference-to-video` uçları) doğrudan **9'a kadar referans görsel**
+alır; anahtar kare üretmeye hiç gerek kalmaz, her klip bağımsız üretilir, zincir hiç kurulmaz.
+
+En temiz sonuç ama **fiyat birimini kontrol et** — bu sınıf modeller genelde video-token
+bazlı fiyatlanır ve saniye başına fiyatlanan bir modelden kat kat pahalı olabilir. Kalite/bütçe
+takasını kullanıcıya sun (`skills/fal-butler/references/cost-model.md`).
+
+### D. Zincir — yalnızca 2–3 klipte ve süreklilik şartsa
+
+Aşağıdaki 5 adım. Kesintisiz bir eylemin devamı gerekiyorsa (bir hareketin ortasından devam)
+zincir hâlâ doğru araçtır — ama kısa tut.
+
 ### 4. Zincir — sahne N'in son karesi, N+1'in referansına
 
 Kritik adım. Sahne N'in **son karesi** çıkarılır ve sahne N+1'in anahtar karesini üretirken
