@@ -16,12 +16,17 @@ oluşan her sapma altı sahneye çarpan olarak yansır.
 **Ürün-ekran anlatımında** karşılığı: arayüzün referans görselleri (ana ekran, liste, detay).
 Aynı mantık.
 
-### 2. Sahne anahtar karesi — image-edit ile
+### 2. Klip anahtar karesi — image-edit ile, **klip başına bir tane**
 
-Her sahnenin başlangıç karesi, karakter sayfasından **image-edit / referanslı üretim** ile
+Her **klibin** başlangıç karesi, karakter sayfasından **image-edit / referanslı üretim** ile
 türetilir. Sıfırdan text-to-image ile üretme — o karakteri yeniden icat eder.
 
-Girdi: karakter sayfası görselleri (referans) + `fal-dop`'un o sahneye ait görsel reçetesi.
+Girdi: karakter sayfası görselleri (referans) + `fal-dop`'un o klibe ait görsel reçetesi.
+
+**Sahne başına değil, klip başına.** Bir klip iki sahne taşıyorsa yine tek anahtar kare üretilir;
+ikinci sahne kamera hareketiyle gelir (`duration-budget.md`).
+
+**Bitiş karesi üretme** — yalnızca match cut planlandıysa ya da bir sahne bölündüyse, gerekçesiyle.
 
 ### 3. Anahtar kare → video
 

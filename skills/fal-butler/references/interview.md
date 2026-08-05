@@ -121,14 +121,16 @@ görsel stil. Karakter ve mekan soruları atlanır; Aşama 3'te yalnızca sahne 
 
 ### 1. Sahne sayısı
 
-Süreye göre öneriyi gerekçesiyle sun, sonra sor:
+> 30 saniye için **4–6 sahne** öneriyorum. Sahne, hikâyenin bir adımı demek — kaç adımda
+> anlatmak istersiniz?
 
-> 30 saniye için **3–4 sahne** öneriyorum. Daha fazla sahne = sahne başına daha az saniye =
-> her sahnede daha az şey anlatabilme. Daha az sahne = daha uzun planlar, daha sakin ritim.
-> Kaç sahne olsun?
+**Kullanıcıya "klip" deme, "sahne" de.** Sahne sayısı anlatının ritmini belirler; kaç video
+üretileceğini değil. Üretim tarafında birden fazla sahne tek bir klipte birleşebilir ve geçişi
+kamera hareketi taşır — bu, videoyu hem akıcı hem sağlam yapar
+(`skills/fal-motion/references/duration-budget.md`).
 
-Kabaca 10 saniyeye bir sahne iyi bir başlangıç; ama **eşit bölme** (bkz.
-`skills/fal-story/references/dramaturgy.md`).
+Sahne sayısı arttıkça sahne başına saniye düşer; 4 saniyenin altına inen sahne anlatamaz. Bunu
+gerekçe olarak söyle ama karar kullanıcının.
 
 ### 2. Mekan tek mi, değişiyor mu — **bunu mutlaka sor**
 
@@ -179,12 +181,46 @@ al ve **birebir** `brief.md`'ye yaz — yorumlama.
 
 **2. Dil** — TR / EN / ikisi
 
-**3. Kapsam** — üçü **ayrı ayrı** sorulur, her biri kapatılabilir:
-- Seslendirme var mı?
-- Müzik var mı?
-- Altyazı var mı?
+**3. Kapsam** — üçü **ayrı ayrı** sorulur ve her birinin **üç** cevabı vardır:
 
-**4. Seslendirme metni kime ait** *(seslendirme açıksa)*
+Her soruda seçenekler: **Üretilsin** · **Sonra kendim eklerim** · **Hiç olmasın**
+
+Ortadaki seçenek önemli — kullanıcı kendi müziğini/sesini kendi düzenleyicisinde eklemek
+isteyebilir. O zaman düğüm üretilmez ama montaj ona **yer bırakacak** şekilde kurulur.
+
+> **Müzik olsun mu?**
+> - **Üretilsin** — sahne tonuna uygun bir müzik üretirim, montaja gömerim
+> - **Sonra kendim eklerim** — müzik düğümü üretmem; videoyu müziksiz teslim ederim, sen
+>   kendi düzenleyicinde eklersin. Seslendirme varsa onu ayrı ses dosyası olarak da veririm
+> - **Hiç olmasın** — sessiz kalsın
+
+> **Seslendirme olsun mu?**
+> - **Üretilsin** — metni yazar, seslendirmeyi üretir, montaja gömerim
+> - **Sonra kendim seslendiririm** — metni yazarım, zamanlamasıyla birlikte veririm; sesi sen
+>   üretir/kaydedersin. Sahne süreleri metne göre ayarlanır
+> - **Hiç olmasın** — sadece görüntü ve müzik
+
+> **Altyazı olsun mu?**
+> - **Üretilsin** — `.srt` dosyası olarak veririm. **Videoya gömemiyorum** — fal'ın montaj
+>   aracında metin desteği yok; yükleme ekranında altyazı dosyası olarak ekleyebilirsin
+> - **Hiç olmasın**
+
+Altyazıda "sonra kendim eklerim" seçeneği **yok**, çünkü zaten gömemiyoruz — `.srt` üretmek
+her hâlükârda faydalı ve bedava. Bu kısıtı soruyu sorarken açıkça söyle
+(`skills/fal-edit/references/compose-schema.md`).
+
+### Kapsam kararları montajı değiştirir
+
+`fal-editor`'a hangi kararın verildiğini **açıkça** ilet:
+
+| Karar | Montaj |
+|---|---|
+| Müzik üretilsin | Müzik track'i, `loudnorm` ile kısılmış |
+| Müzik sonra eklenecek | Müzik track'i **yok**; final video müziksiz teslim edilir |
+| Seslendirme sonra eklenecek | Ses track'i yok; **metin ve zamanlama ayrı dosyada** verilir |
+| Üçü de yok | `compose` tek video track'iyle çalışır |
+
+**4. Seslendirme metni kime ait** *(seslendirme üretilecekse ya da sonra eklenecekse)*
 
 > Seslendirme metnini ben mi yazayım, yoksa sizde hazır bir metin var mı?
 

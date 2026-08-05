@@ -1,5 +1,63 @@
 # Klip süre bütçesi
 
+## Sahne ≠ klip — bu ayrım her şeyin temeli
+
+| | Ne demek | Kim belirler |
+|---|---|---|
+| **Sahne** | Anlatı birimi — hikâyenin bir beat'i | `fal-director` |
+| **Klip** | Üretim birimi — tek bir video düğümü | **sen** |
+
+Bunlar **eşit değildir.** Sahada eşit sayıldı ve 30 saniyelik bir reklam 5 klip + 10 anahtar
+kare + 4 son-kare düğümü üretti — 25 düğümlük bir grafik. Her ek düğüm bir kırılma noktası, her
+ek anahtar kare bir anatomi kumarı.
+
+### Klip sayısı formülü
+
+```
+klip sayısı = ceil(toplam süre ÷ modelin klip tavanı)
+```
+
+30 sn, tavan 10 sn → **3 klip**. Hikâye 6 sahne isteyebilir; üretim yine 3 klip olur.
+
+**Bölmeyi hikâye değil, modelin fiziksel sınırı belirler.** Bu bir kısıtlama değil, kalite
+tercihi: az ve uzun klip daha az birleşme noktası, daha az boşluk riski demek.
+
+### Bir klip birden fazla sahne taşıyabilir
+
+Geçişi **kamera hareketi** yapar, kesme değil:
+
+> "Camera starts wide/medium on her at the desk. Camera moves in smoothly, arcing around to the
+> front of her, coming to rest in a close-up as she reads the score."
+
+Tek üretim, iki plan, kesintisiz. Kalıp ve fotogerçekçilik sözlüğü:
+`skills/fal-prompt/references/photorealism.md`.
+
+`compose` yalnızca sert kesim yapabildiği için (`skills/fal-edit/references/compose-schema.md`)
+akıcılığın tek kaynağı budur.
+
+### Klibi ne zaman bölersin
+
+Yalnızca **sert bir görsel kopuş** gerçekten gerekiyorsa:
+
+- Mekan değişiyor
+- Zaman atlaması var
+- Kamera hareketiyle bağlanamayacak kadar farklı iki durum
+
+Bunların hiçbiri yoksa **bölme.** Gerekçesini de raporuna yaz.
+
+### Klip başına tek anahtar kare
+
+Varsayılan: her klip için **yalnızca başlangıç karesi**. Bitiş karesi (first/last frame)
+üretme — zincirleme varsayılan olmaktan çıktı, dolayısıyla klibin nerede biteceğini kontrol
+etmeye çoğu durumda gerek yok.
+
+Bitiş karesi yalnızca şu iki durumda üretilir ve gerekçesi yazılır:
+1. `fal-dop` iki klip arasında **match cut** planlamışsa
+2. Bir sahne bölünmek zorunda kalmış ve ikinci klip birincinin bittiği yerden başlamalıysa
+
+Her ek anahtar kare bir üretim daha ve bir anatomi riski daha — sahadaki "uçan el" tam olarak
+bir **bitiş karesinde** çıktı.
+
 ## Sınırı şemadan oku
 
 Video modelleri klip başına sınırlı süre üretir. Bu sınır modelden modele ve sürümden sürüme

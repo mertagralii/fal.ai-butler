@@ -57,9 +57,9 @@ Röportaj cevapları. Slug: `YYYY-MM-DD-<kısa-ad>`.
 | **Mekan** | **tek mekan — ev ofisi** | kullanıcı |
 | Ton | sıcak, esprili | kullanıcı |
 | Dil | TR | kullanıcı |
-| Seslendirme | var — metni plugin yazacak | kullanıcı |
-| Müzik | var | kullanıcı |
-| Altyazı | var | kullanıcı |
+| Seslendirme | **üretilsin** — metni plugin yazacak | kullanıcı |
+| Müzik | **sonra kendim eklerim** | kullanıcı |
+| Altyazı | **üretilsin** — .srt olarak | kullanıcı |
 | CTA | "Ücretsiz dene" | kullanıcı |
 | **Kalite tercihi** | **tahmini gördükten sonra karar** | kullanıcı |
 | Seed | 731914 | üretildi |
@@ -104,6 +104,17 @@ Onay kapısında sunulan dosya. **Düz Türkçe, ham prompt yok.**
 # Storyboard: <Ad>
 
 **Toplam:** 60 sn · 6 sahne · 9:16 · Instagram Reels
+
+## Üretim yapısı
+
+6 sahne **3 klipte** üretilecek. Sahneler arası geçişleri kamera hareketi taşıyor — bu, ayrı
+ayrı üretip birleştirmeye göre daha akıcı ve daha az kırılgan.
+
+| Klip | Süre | Sahneler | Geçiş |
+|---|---|---|---|
+| 1 | 10 sn | 1 → 2 | kamera geniş plandan yakına yaklaşıyor |
+| 2 | 10 sn | 3 → 4 | kamera ekrana kayıyor |
+| 3 | 10 sn | 5 → 6 | kamera geri çekiliyor |
 
 ## Karakter
 **Ayşe** — 30'lu yaşların başı, omuz hizası koyu saç, sade bej gömlek, gündelik ofis ortamı.

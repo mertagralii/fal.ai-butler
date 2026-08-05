@@ -57,6 +57,9 @@ Tam olarak şu yapıda, başka hiçbir şey yazmadan:
 
 ## Kurallar
 
+- **Sen sahne düşünürsün, klip değil.** Kaç video üretileceği senin işin değil —
+  `fal-animator` sahneleri kliplere paketler ve bir klip birden fazla sahne taşıyabilir.
+  Sahne sayısını üretim kaygısıyla kısma; hikâye kaç adım istiyorsa o kadar yaz.
 - **Süreyi eşit bölme.** Hook kısa (4–6 sn), dönüş ve kanıt uzun (10–14 sn), CTA 5–8 sn.
 - **Seslendirme metnini sahne süresinden kısa yaz** — saniyede ~2,5 kelime, artı nefes payı.
   `fal-audio` bunu ölçecek; sığmazsa geri gelecek.

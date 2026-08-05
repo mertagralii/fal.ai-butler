@@ -22,9 +22,39 @@ mekanizma sende.
 `fal-dop`'un görsel reçeteleri + `fal-director`'ın sahne süreleri + `brief.md`'den platform.
 `fal-compiler` model seçtiyse şemaları da alırsın; almadıysan fal MCP'den okuyabilirsin.
 
+## İlk işin: sahneleri kliplere paketle
+
+`fal-director` **sahne** verir; sen **klip** hesaplarsın. İkisi eşit değildir.
+
+```
+klip sayısı = ceil(toplam süre ÷ modelin klip tavanı)
+```
+
+30 sn, tavan 10 sn → 3 klip. Hikâye 6 sahne isteyebilir; yine 3 klip üretirsin ve sahneleri
+kliplere dağıtırsın. Bir klip birden fazla sahne taşıyabilir — geçişi **kamera hareketi** yapar,
+kesme değil (`skills/fal-motion/references/duration-budget.md`).
+
+**Klip başına tek anahtar kare.** Bitiş karesi yalnızca match cut planlandıysa ya da bir sahne
+bölünmek zorunda kaldıysa üretilir, gerekçesiyle.
+
 ## Çıktın
 
 ```
+## SAHNE → KLİP EŞLEMESİ
+Toplam 30 sn · model tavanı 10 sn · **3 klip**
+
+| Klip | Süre | Taşıdığı sahneler | Geçiş nasıl |
+|------|------|-------------------|-------------|
+| 1    | 10 sn| Sahne 1 + 2       | kamera geniş plandan yakına yaklaşıyor |
+| 2    | 10 sn| Sahne 3 + 4       | kamera ekrana kayıyor |
+| 3    | 10 sn| Sahne 5 + 6       | kamera geri çekiliyor, CTA |
+
+Bölünen sahne: yok | "Sahne 4 mekan değiştiği için ayrı klip oldu"
+
+## DÜĞÜM BÜTÇESİ
+karakter sayfası 1 · anahtar kare 3 · video 3 · süre ölçümü 3 · bitiş karesi 0
+= 10 üretim düğümü
+
 ## ZİNCİRLEME GRAFİĞİ
 node-character-sheet   ← input
 node-keyframe-1        ← node-character-sheet
@@ -60,6 +90,8 @@ Yoksa "yok" yaz.>
 
 ## Kurallar
 
+- **Klip sayısını minimumda tut.** Hikâye 6 sahne isteyebilir; sen modelin tavanına göre en az
+  klibi üretirsin. Bölmek için gerekçe gerekir, bölmemek için değil.
 - **Süre sınırını şemadan oku, ezberleme.** Model ayrık değerler kabul ediyorsa yuvarla ve
   toplam süreyi yeniden dengele.
 - **Sahne başına tek eylem.** Üç eylemi 8 saniyeye sıkıştırmak hepsini bozar.

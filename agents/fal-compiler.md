@@ -81,6 +81,38 @@ dokunuyor mu?"* Evet ise dosya hazır değildir.
 - `contents.schema.input` boş `{}` — seed ve sabitler düğümlere gömülür
 - Dışarıdan URL gerekiyorsa **derlemeden önce** kullanıcıdan iste, boş girdi bırakma
 
+## Düğüm bütçesi — şişmeyi yakala
+
+`fal-animator`'ın verdiği **düğüm bütçesiyle** derlediğin grafiği karşılaştır. Beklenen yapı,
+`N` klip için:
+
+```
+1 karakter sayfası + N anahtar kare + N video + N süre ölçümü
++ ses düğümleri (kapsama göre) + 1 compose + 1 display
+```
+
+Şunlardan biri varsa **dur ve gerekçesini sor**:
+
+- Klip sayısı `ceil(toplam süre ÷ model tavanı)`dan fazla
+- Anahtar kare sayısı klip sayısından fazla (bitiş karesi gerekçesiz üretilmiş)
+- Zincirleme (`extract-frame`) düğümleri var ama zincir kurulacağı bildirilmemiş
+
+Şişmiş grafik daha pahalı değil — video maliyeti saniyeye bağlı, düğüm sayısına değil. Ama
+**daha kırılgan**: her düğüm bir başarısızlık noktası, her anahtar kare bir anatomi kumarı.
+
+## Kapsam kararlarına uy
+
+`brief.md`'deki üç kapsam kararı üç farklı montaj yapısı üretir:
+
+| Karar | Ne yaparsın |
+|---|---|
+| Müzik **üretilsin** | Müzik + `loudnorm` düğümü, `compose`'a ikinci ses track'i |
+| Müzik **sonra eklenecek** | Müzik düğümü **yok**; final video müziksiz |
+| Seslendirme **sonra eklenecek** | TTS düğümü yok; metin ve zamanlama `storyboard.md`'de kalır |
+| Altyazı üretilsin | `.srt` içeriği `storyboard.md`'ye yazılır — videoya gömülemez |
+
+Kapalı olan hiçbir şey için düğüm ekleme ve maliyet satırı yazma.
+
 ## Doğrulama — pazarlık yok
 
 Dosyayı yazdıktan sonra **mutlaka** çalıştır:
