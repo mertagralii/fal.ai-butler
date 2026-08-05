@@ -15,6 +15,13 @@ export const ERROR = {
   MISSING_CONTENTS: 'MISSING_CONTENTS',
   MISSING_NODES: 'MISSING_NODES',
   MISSING_INPUT_SCHEMA: 'MISSING_INPUT_SCHEMA',
+  MISSING_CONTENTS_VERSION: 'MISSING_CONTENTS_VERSION',
+  MISSING_CONTENTS_OUTPUT: 'MISSING_CONTENTS_OUTPUT',
+  MISSING_OUTPUT_SCHEMA: 'MISSING_OUTPUT_SCHEMA',
+  OUTPUT_MISMATCH: 'OUTPUT_MISMATCH',
+  MISSING_DEPENDS: 'MISSING_DEPENDS',
+  COMPOSE_BAD_TRACK: 'COMPOSE_BAD_TRACK',
+  COMPOSE_SUSPECT_MS: 'COMPOSE_SUSPECT_MS',
   MISSING_OUTPUT_NODE: 'MISSING_OUTPUT_NODE',
   NODE_ID_MISMATCH: 'NODE_ID_MISMATCH',
   UNKNOWN_DEPENDENCY: 'UNKNOWN_DEPENDENCY',
@@ -77,6 +84,73 @@ function collectRefs(value, out = []) {
   return out
 }
 
+/**
+ * ffmpeg-api/compose'un track yapısını denetler.
+ *
+ * Şema model sayfasının "Other types" bölümünde durur ve doküman aramasında çıkmaz; bu yüzden
+ * uydurulmaya çok açık. Gerçek yapı:
+ *   Track    = { id, type: 'video'|'audio'|'image', keyframes: Keyframe[] }
+ *   Keyframe = { timestamp, duration, url }   ← ikisi de MİLİSANİYE
+ *
+ * `clips`/`source`/`start_time` gibi alanlar yoktur; fal onları sessizce atar ve geriye
+ * boş track kalır. Saniye yazmak ise 1000× kısa video üretir.
+ */
+const KEYFRAME_FIELDS = new Set(['timestamp', 'duration', 'url'])
+const TRACK_FIELDS = new Set(['id', 'type', 'keyframes'])
+
+function checkComposeTracks(nodeId, tracks, push) {
+  if (!Array.isArray(tracks)) {
+    push(ERROR.COMPOSE_BAD_TRACK, nodeId, '"tracks" bir dizi olmalı.')
+    return
+  }
+
+  for (const track of tracks) {
+    if (!isPlainObject(track)) {
+      push(ERROR.COMPOSE_BAD_TRACK, nodeId, 'Her track bir nesne olmalı.')
+      continue
+    }
+
+    for (const key of Object.keys(track)) {
+      if (!TRACK_FIELDS.has(key)) {
+        push(ERROR.COMPOSE_BAD_TRACK, nodeId, `Track'te "${key}" diye bir alan yok — beklenen: id, type, keyframes.`)
+      }
+    }
+
+    if (!Array.isArray(track.keyframes)) {
+      push(
+        ERROR.COMPOSE_BAD_TRACK,
+        nodeId,
+        `Track "${track.id ?? '?'}" içinde "keyframes" dizisi yok. ("clips" diye bir alan yoktur.)`,
+      )
+      continue
+    }
+
+    for (const kf of track.keyframes) {
+      if (!isPlainObject(kf)) {
+        push(ERROR.COMPOSE_BAD_TRACK, nodeId, 'Her keyframe bir nesne olmalı.')
+        continue
+      }
+      for (const key of Object.keys(kf)) {
+        if (!KEYFRAME_FIELDS.has(key)) {
+          push(
+            ERROR.COMPOSE_BAD_TRACK,
+            nodeId,
+            `Keyframe'de "${key}" diye bir alan yok — beklenen: timestamp, duration, url.`,
+          )
+        }
+      }
+      // Bir reklam klibi asla 1 saniyeden kısa değildir; 1000'in altı neredeyse kesin saniye yazımıdır.
+      if (typeof kf.duration === 'number' && kf.duration > 0 && kf.duration < 1000) {
+        push(
+          ERROR.COMPOSE_SUSPECT_MS,
+          nodeId,
+          `duration=${kf.duration} — bu alan MİLİSANİYE. Saniye yazdıysan video 1000× kısa render edilir.`,
+        )
+      }
+    }
+  }
+}
+
 export function validateWorkflow(workflow, { catalog = null } = {}) {
   const errors = []
   const push = (code, node, message) => errors.push({ code, node, message })
@@ -98,9 +172,23 @@ export function validateWorkflow(workflow, { catalog = null } = {}) {
     return { valid: false, errors }
   }
 
+  // fal'ın POST /workflows referansı contents için şunları zorunlu sayar.
+  // Bunlar eksikken panel "Field required" der ve workflow hiç çalıştırılamaz —
+  // doğrulayıcının en pahalı kör noktasıydı.
+  if (typeof contents.version !== 'string' || contents.version.trim() === '') {
+    push(ERROR.MISSING_CONTENTS_VERSION, null, '"contents.version" yok (ör. "1.0.0"). Panel "Field required" verir.')
+  }
+  if (!isPlainObject(contents.output)) {
+    push(ERROR.MISSING_CONTENTS_OUTPUT, null, '"contents.output" yok — API çıkış eşlemesi tanımsız.')
+  }
+  if (!isPlainObject(contents.schema?.output)) {
+    push(ERROR.MISSING_OUTPUT_SCHEMA, null, '"contents.schema.output" yok.')
+  }
+
+  // input şeması boş nesne olabilir ({}), ama var olmalı.
   const inputSchema = contents.schema?.input
   if (!isPlainObject(inputSchema)) {
-    push(ERROR.MISSING_INPUT_SCHEMA, null, '"contents.schema.input" yok — workflow girdileri tanımsız.')
+    push(ERROR.MISSING_INPUT_SCHEMA, null, '"contents.schema.input" yok. Girdi istemiyorsan boş nesne ({}) yaz.')
   }
   const inputFields = isPlainObject(inputSchema) ? Object.keys(inputSchema) : []
 
@@ -111,9 +199,34 @@ export function validateWorkflow(workflow, { catalog = null } = {}) {
     push(ERROR.MISSING_OUTPUT_NODE, null, 'type:"display" olan bir çıkış düğümü yok.')
   }
 
+  // contents.output ile display düğümünün fields'ı aynı şey değildir — ikisi de gerekir —
+  // ama tutarsız olmaları sessiz bir hata kaynağıdır.
+  const displayId = ids.find((id) => nodes[id]?.type === 'display')
+  if (isPlainObject(contents.output) && displayId && isPlainObject(nodes[displayId].fields)) {
+    const out = contents.output
+    const fields = nodes[displayId].fields
+    for (const key of new Set([...Object.keys(out), ...Object.keys(fields)])) {
+      if (!(key in out)) {
+        push(ERROR.OUTPUT_MISMATCH, displayId, `"${key}" display.fields'ta var ama contents.output'ta yok.`)
+      } else if (!(key in fields)) {
+        push(ERROR.OUTPUT_MISMATCH, null, `"${key}" contents.output'ta var ama display.fields'ta yok.`)
+      } else if (out[key] !== fields[key]) {
+        push(
+          ERROR.OUTPUT_MISMATCH,
+          displayId,
+          `"${key}" iki yerde farklı: contents.output "${out[key]}" ≠ display.fields "${fields[key]}".`,
+        )
+      }
+    }
+  }
+
   for (const id of ids) {
     const node = nodes[id]
     const depends = Array.isArray(node?.depends) ? node.depends : []
+
+    if (node?.type === 'run' && !Array.isArray(node?.depends)) {
+      push(ERROR.MISSING_DEPENDS, id, 'Bağımlılığı olmayan düğümde bile "depends": [] bulunmalı.')
+    }
 
     if (node?.id !== undefined && node.id !== id) {
       push(ERROR.NODE_ID_MISMATCH, id, `Düğümün "id" alanı "${node.id}" ama haritadaki anahtar "${id}".`)
@@ -134,9 +247,11 @@ export function validateWorkflow(workflow, { catalog = null } = {}) {
         continue
       }
 
-      if (target === VIRTUAL_INPUT) {
+      if (target === VIRTUAL_INPUT && isPlainObject(inputSchema)) {
+        // Boş {} girdi şeması meşrudur ve "hiç girdi yok" demektir — o durumda
+        // her $input.x referansı hatadır.
         const field = refPath(ref, VIRTUAL_INPUT).split('.')[0]
-        if (inputFields.length > 0 && field && !inputFields.includes(field)) {
+        if (field && !inputFields.includes(field)) {
           push(ERROR.UNKNOWN_INPUT_FIELD, id, `"${ref}" — "${field}" contents.schema.input içinde tanımlı değil.`)
         }
       }
@@ -148,6 +263,10 @@ export function validateWorkflow(workflow, { catalog = null } = {}) {
           `"${ref}" ifadesi "${target}" düğümüne işaret ediyor ama depends listesinde yok.`,
         )
       }
+    }
+
+    if (typeof node?.app === 'string' && node.app.includes('ffmpeg-api/compose')) {
+      checkComposeTracks(id, node.input?.tracks, push)
     }
 
     // Katalog verildiyse, çalıştırılan modelin gerçekten var olduğunu doğrula.

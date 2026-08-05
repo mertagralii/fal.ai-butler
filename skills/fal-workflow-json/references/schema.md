@@ -16,11 +16,16 @@ sonra `scripts/validate-workflow.mjs` ile `tests/fixtures/` dosyalarını.
 
 ```json
 {
-  "name": "live-in-scene",
-  "title": "live-in-scene",
+  "name": "kampanya-adi",
+  "title": "Kampanya Adı",
   "contents": {
     "name": "workflow",
-    "schema": { "input": { "...": "..." } },
+    "version": "1.0.0",
+    "schema": {
+      "input": {},
+      "output": { "final_video": { "name": "final_video", "label": "Reklam videosu", "type": "string" } }
+    },
+    "output": { "final_video": "$node-compose-master.video_url" },
     "nodes": { "...": "..." }
   }
 }
@@ -32,10 +37,39 @@ sonra `scripts/validate-workflow.mjs` ile `tests/fixtures/` dosyalarını.
 | `title` | evet | Görünen ad |
 | `contents` | evet | Asıl tanım |
 | `contents.name` | evet | Sabit: `"workflow"` |
-| `contents.schema.input` | evet | Workflow'un dışarıdan aldığı parametreler |
+| **`contents.version`** | **evet** | Sürüm dizesi. `"1.0.0"` panelde kabul edildi |
+| `contents.schema.input` | evet | Girdi parametreleri. **Girdi istemiyorsan boş nesne `{}`** — alanın kendisi bulunmalı |
+| **`contents.schema.output`** | **evet** | Çıkış alanlarının şeması |
+| **`contents.output`** | **evet** | API'nin çıkış eşlemesi: `{ "<ad>": "$düğüm.alan" }` |
 | `contents.nodes` | evet | Düğüm haritası: `{ "<düğüm-id>": { ... } }` |
 
 **Dikkat:** Düğümler üst seviyede değil, `contents.nodes` altındadır.
+
+### Kalın yazılan üç alan eksikse workflow hiç çalıştırılamaz
+
+Panel `Save & Run → Create` adımında alan adı vermeden **"Field required"** der ve istek
+sunucuya hiç gitmez. Hata sayısı eksik alan sayısı kadardır ve düğümlerde hiçbir görsel işaret
+olmaz — teşhisi son derece zor. Bunlar sahada bir kampanyada bulundu; kaynak fal'ın
+`POST /workflows` referansı.
+
+`scripts/validate-workflow.mjs` üçünü de denetler (`MISSING_CONTENTS_VERSION`,
+`MISSING_CONTENTS_OUTPUT`, `MISSING_OUTPUT_SCHEMA`).
+
+### `display.fields` ile `contents.output` aynı şey değildir — ikisi de gerekir
+
+| | Ne yapar |
+|---|---|
+| `display` düğümünün `fields`'ı | Panelde **Response kartını** çizer |
+| `contents.output` | **API'nin çıkış eşlemesi** |
+
+Aynı anahtarları ve aynı referansları taşımalıdırlar; doğrulayıcı tutarsızlığı
+`OUTPUT_MISMATCH` ile yakalar.
+
+### Builder'ın "Copy/Export workflow" çıktısını şablon alma
+
+fal Builder'ın kendi serileştirmesi **eksiktir** — yalnızca `name`, `schema`, `nodes` verir;
+fal'ın kendi API'sinin zorunlu saydığı `version`, `output` ve `schema.output` yoktur. Onu
+şablon alan biri aynı hatayı yeniden üretir. **Kanonik referans API doküman sayfasıdır.**
 
 ---
 
@@ -54,30 +88,24 @@ altında tanımlanır ve düğümler ona `depends: ["input"]` diyerek bağlanır
 
 Bir düğüm `$input.film_name` yazdığında, `film_name` bu haritada tanımlı olmalıdır.
 
-### Kampanya workflow'unun girdileri
-
-Prompt'ların tamamı `fal-promptsmith` tarafından derleme anında gömülür, dolayısıyla "girdi yok"
-demek isteyebilirsin — **ama olmaz**: doğrulayıcı `MISSING_INPUT_SCHEMA` verir ve fal Workflow
-Builder girdisiz bir workflow'u anlamlı biçimde gösteremez.
-
-Her kampanya workflow'u **en az** şu girdiyi tanımlar:
+### Kampanya workflow'unun girdileri — varsayılan: **girdi yok**
 
 ```json
-"schema": {
-  "input": {
-    "seed": {
-      "name": "seed",
-      "label": "Seed (tekrar üretilebilirlik)",
-      "type": "number",
-      "default": 731914
-    }
-  }
-}
+"schema": { "input": {} }
 ```
 
-Seed'i girdi yapmak iki işe yarar: kullanıcı fal panelinde tek bir alanı değiştirerek tüm
-kampanyayı yeniden üretebilir, ve `revise` aynı seed'i geçirerek değişmeyen sahneleri
-değişmeden tutabilir.
+Alanın kendisi bulunmalı ama **boş olmalı.** Sebep sahada öğrenildi:
+
+- `contents.schema.input` içinde tanımlı her girdi, panelde **zorunlu ve boş** bir kutu olarak
+  çıkar.
+- **`default` değeri panel tarafından kullanılmaz.** Yani "varsayılanı olan opsiyonel girdi"
+  diye bir şey yok; kullanıcı her çalıştırmada elle doldurmak zorunda kalır.
+
+Seed'i girdi yapmak mantıklı görünüyordu ama pratikte tam tersi oldu. **Seed'i düğümlere sabit
+göm** ve değerini `brief.md`'ye yaz — `revise` oradan okur, kullanıcı da dosyada değiştirip
+yeniden import edebilir.
+
+Kullanıcı açıkça "panelden şunu değiştirebileyim" derse o alanı girdi yap; aksi halde yapma.
 
 **Gerçek ürün görseli kullanılıyorsa** (aşağıya bakın) her görsel için birer `string` girdi
 daha eklenir:
@@ -197,12 +225,18 @@ Bir düğüm `$X.foo` okuyorsa, `X` o düğümün `depends` listesinde de bulunm
 
 ---
 
-## Bilinen belirsizlik: import yolu
+## Import — doğrulandı
 
-fal'ın dokümanında bu JSON'un Workflow Builder'a **nasıl import edileceği** belgelenmemiş.
-Platform API'leri workflow için yalnızca okuma (list + get) veriyor; oluşturma endpoint'i yok.
+**2026-08-05'te gerçek bir kampanyayla test edildi:** üretilen `workflow.json` fal Workflow
+Builder'a import edildi ve **hatasız kabul edildi** (25 düğüm). Yani biçim doğru.
 
-Kullanıcıya JSON teslim ederken bunu dürüstçe söyle: dosya fal'ın workflow biçimindedir, ancak
-import adımı fal arayüzünden manuel yapılır ve arayüz değişmiş olabilir. Import başarısız olursa
-bu bir plugin hatası değildir — ama kullanıcıya alternatif olarak düğümleri Workflow Builder'da
-elle kurabileceği sahne listesini (`storyboard.md`) sun.
+Import fal panelinden **elle** yapılır. Programatik oluşturma mümkün değildir:
+`POST /workflows` **ADMIN anahtarı** ister; normal `FAL_KEY` ile 403 döner. Platform API'leri
+workflow için yalnızca okuma (list + get) verir.
+
+**Bunun sonucu önemli:** workflow'un fal tarafından kabul edilip edilmeyeceğini API'den
+doğrulayamazsın. `scripts/validate-workflow.mjs` **tek savunma hattıdır** — bu yüzden yukarıdaki
+`contents` alanları ve compose denetimleri ona eklendi.
+
+Kullanıcıya teslim ederken: dosyayı fal panelinden import etmesi gerektiğini söyle. Import
+sonrası panelde `Save & Run` denemesi, kalan tek doğrulama adımıdır.

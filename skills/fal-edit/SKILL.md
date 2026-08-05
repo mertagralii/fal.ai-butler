@@ -12,7 +12,8 @@ videoya çevirmek senin işin — ve `workflow.json`'un son, en karmaşık düğ
 
 - **`references/rhythm.md`** — kesim tipleri, geçiş seçimi, zaman çizelgesi
 - **`references/subtitles.md`** — güvenli alan, okunma hızı, satır bölme, gömme vs `.srt`
-- **`references/platform-cuts.md`** — en-boy oranı varyantları ve `ffmpeg-api/compose` yapısı
+- **`references/compose-schema.md`** — **ÖNCE BUNU OKU.** Track/Keyframe şeması, milisaniye, üç sert sınır
+- **`references/platform-cuts.md`** — en-boy oranı varyantları ve montaj düğüm yapısı
 
 ## Girdin ve çıktın
 
@@ -27,6 +28,17 @@ altyazı parçaları, `brief.md`'deki platform ve kapsam seçimleri
 `fal-director` *ne anlatıldığına* karar verdi: sahne sırası, süre hedefi, mesaj. Sen *nasıl
 birleştiğine* karar verirsin: geçiş tipi, hizalama, kırpma, render. Hikâyeyi yeniden yazma;
 sahne sırasını değiştirme.
+
+## Montajın üç sert sınırı — planlarken bil
+
+`compose` şeması sabittir ve şunları **yapamaz** (ayrıntı `references/compose-schema.md`):
+
+1. **Geçiş yok** — yalnızca sert kesim. Dissolve ve fade planlama.
+2. **Ses seviyesi kontrolü yok** — zaman bazlı ducking imkânsız. Müziği `loudnorm` ile baştan
+   düşük seviyede üret.
+3. **Altyazı gömülemez** — `.srt` yedek değil, tek seçenek.
+
+Bunları kullanıcıya baştan söyle; sonradan "yapılamadı" demek yerine plana doğru olanı yaz.
 
 ## Son kontrol — teslimden önce
 

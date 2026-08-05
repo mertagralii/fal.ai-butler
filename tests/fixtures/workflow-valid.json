@@ -3,22 +3,27 @@
   "title": "Test Campaign",
   "contents": {
     "name": "workflow",
+    "version": "1.0.0",
     "schema": {
-      "input": {
-        "character_description": {
-          "name": "character_description",
-          "label": "Karakter tarifi",
+      "input": {},
+      "output": {
+        "final_video": {
+          "name": "final_video",
+          "label": "Reklam videosu",
           "type": "string"
         }
       }
+    },
+    "output": {
+      "final_video": "$fal_ai/kling/v2_1.video.url"
     },
     "nodes": {
       "node-hero": {
         "type": "run",
         "id": "node-hero",
         "app": "fal-ai/flux/dev",
-        "depends": ["input"],
-        "input": { "prompt": "$input.character_description" }
+        "depends": [],
+        "input": { "prompt": "a woman in her early thirties, beige linen shirt" }
       },
       "fal_ai/kling/v2_1": {
         "type": "run",
@@ -34,7 +39,7 @@
         "type": "display",
         "id": "output",
         "depends": ["fal_ai/kling/v2_1"],
-        "fields": { "final_video": "$fal_ai/kling/v2_1.video" }
+        "fields": { "final_video": "$fal_ai/kling/v2_1.video.url" }
       }
     }
   }

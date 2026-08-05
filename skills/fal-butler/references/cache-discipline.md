@@ -60,6 +60,22 @@ için cache'i atla, doğrudan çek.
 `search_models` sonucu fiyat taşımaz — `get_pricing` ayrıca çağrılır ve sonuç kataloğa
 eklenerek yazılır. Aksi halde onay kapısındaki maliyet tablosu boş çıkar.
 
+### Kategori adları modalite adlarıyla örtüşmez
+
+fal'ın kategori adlarına güvenme. Sahada `text-to-music` filtresi **boş döndü** — müzik
+modelleri `text-to-audio` kategorisinde. Kategori taramasını **serbest metin aramasıyla
+çaprazla** (`"music"` gibi).
+
+Taranması gereken kategoriler arasında **`image-editing`** de var: image-edit, karakter
+tutarlılığı stratejisinin merkezinde ve neredeyse her kampanyada kullanılıyor. Atlanırsa
+kullanılan endpoint katalogda bulunmaz ve derleme aşamasında `UNKNOWN_ENDPOINT` turu doğar.
+
+### Seçilen endpoint kataloğa da yazılır
+
+`fal-compiler` aşama 1, bir endpoint'i seçtiğinde şemasını ve fiyatını cache'e yazıyor — ama
+**`models.json` içindeki endpoint listesine de eklemeli.** Aksi halde aşama 2'de doğrulayıcı
+o endpoint'i tanımaz ve gereksiz bir düzeltme turu harcanır.
+
 **Toptan indirme yapma.** Bin küsur modelin şemasını çekmek hem yavaş hem gereksiz; kampanyada
 altı-yedi model kullanılıyor.
 
@@ -67,7 +83,8 @@ altı-yedi model kullanılıyor.
 
 | Durum | Davranış |
 |---|---|
-| `FAL_KEY` yok | Dur. `setup`'a yönlendir, anahtarın nereden alınacağını ve Windows'ta kalıcı yazma komutunu söyle |
+| `FAL_KEY` yok | Dur. `setup`'a yönlendir, anahtarın nereden alınacağını söyle |
+| **401 alıyorsun ama anahtar kayıtlı** | Süreç ortamı **bayat** olabilir. Kontrol et: `$env:FAL_KEY -ceq [Environment]::GetEnvironmentVariable('FAL_KEY','User')` — eşit değilse Claude Code eski ortamla çalışıyor. IDE'nin gömülü terminali (Rider, VS Code) ortamı tazelemez; **IDE'nin tamamen kapatılması** gerekir. Kalıcı çözüm: anahtarı `~/.claude/settings.json` → `env` bloğuna taşı |
 | fal MCP erişilemiyor, cache **taze** | Sessizce cache'ten devam et |
 | fal MCP erişilemiyor, cache **bayat** | Devam et ama **söyle**: "fal'a ulaşamadım, N gün önceki katalogla çalışıyorum; model kaldırılmış olabilir" |
 | fal MCP erişilemiyor, cache **yok** | **Dur.** Uydurma model adıyla JSON üretip kullanıcıyı fal'ın hata ekranına göndermektense durmak iyidir |

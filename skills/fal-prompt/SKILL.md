@@ -33,6 +33,21 @@ Model şemaları context açısından ağırdır. Üç ayrı agent'ın context'i
 hepsi sende toplanır — hem ucuz hem tutarlı. Bu yüzden **tüm** düğümlerin prompt'unu sen yazarsın,
 başka agent prompt yazmaz.
 
+## `negative_prompt` ve `strength` yaygın DEĞİLDİR
+
+Sahada seçilen beş modelin **hiçbirinde** `negative_prompt` alanı yoktu; image-edit modelinde
+`strength` de yoktu. Yeni nesil modeller (Seedream v4, Kling O1 gibi) bu alanları sunmuyor.
+
+Şemada yoksa `references/negative-prompts.md`'deki rehberliği **uygulamaya çalışma** ve
+"düşük `strength` tut" talimatını zorlama. O durumda karakter tutarlılığı tamamen iki
+mekanizmaya kalır:
+
+1. Sabit karakter bloğunun her prompt'ta **birebir** tekrarı
+2. Referans zinciri (karakter sayfası + bir önceki kare)
+
+İkisini de daha titiz uygula ve **raporda açıkça belirt**: "negatif prompt desteklenmiyor,
+tutarlılık sabit blok + zincirle kuruldu."
+
 ## Değişmez kural
 
 Karakter bible'ını **birebir** kopyala. Yeniden ifade etme, özetleme, eş anlamlı kullanma.

@@ -143,6 +143,107 @@ test('dongu mesaji zinciri gosterir', () => {
   assert.match(cycle.message, /node-b/)
 })
 
+// --- contents seviyesindeki zorunlu alanlar (fal'ın POST /workflows referansı) ---
+
+test('contents.version yoksa yakalanir', () => {
+  const wf = fx('workflow-valid')
+  delete wf.contents.version
+  assert.ok(has(validateWorkflow(wf), ERROR.MISSING_CONTENTS_VERSION))
+})
+
+test('contents.output yoksa yakalanir', () => {
+  const wf = fx('workflow-valid')
+  delete wf.contents.output
+  assert.ok(has(validateWorkflow(wf), ERROR.MISSING_CONTENTS_OUTPUT))
+})
+
+test('contents.schema.output yoksa yakalanir', () => {
+  const wf = fx('workflow-valid')
+  delete wf.contents.schema.output
+  assert.ok(has(validateWorkflow(wf), ERROR.MISSING_OUTPUT_SCHEMA))
+})
+
+test('bos schema.input gecerlidir', () => {
+  const r = validateWorkflow(fx('workflow-valid'))
+  assert.ok(!has(r, ERROR.MISSING_INPUT_SCHEMA))
+  assert.equal(r.valid, true)
+})
+
+test('contents.output ile display.fields anahtarlari uyusmazsa yakalanir', () => {
+  const wf = fx('workflow-valid')
+  wf.contents.output = { baska_anahtar: '$fal_ai/kling/v2_1.video.url' }
+  assert.ok(has(validateWorkflow(wf), ERROR.OUTPUT_MISMATCH))
+})
+
+test('contents.output referansi display.fields ile ayni olmali', () => {
+  const wf = fx('workflow-valid')
+  wf.contents.output.final_video = '$node-hero.images.0.url'
+  assert.ok(has(validateWorkflow(wf), ERROR.OUTPUT_MISMATCH))
+})
+
+test('depends alani olmayan run dugumu yakalanir', () => {
+  const wf = fx('workflow-valid')
+  delete wf.contents.nodes['node-hero'].depends
+  assert.ok(has(validateWorkflow(wf), ERROR.MISSING_DEPENDS, 'node-hero'))
+})
+
+// --- ffmpeg compose ozel denetimi ---
+
+/** compose düğümü olan bir workflow üretir. */
+function withCompose(tracks) {
+  const wf = fx('workflow-valid')
+  wf.contents.nodes['node-compose'] = {
+    type: 'run',
+    id: 'node-compose',
+    app: 'fal-ai/ffmpeg-api/compose',
+    depends: ['fal_ai/kling/v2_1'],
+    input: { tracks },
+  }
+  return wf
+}
+
+test('compose keyframe alan adlari yanlissa yakalanir', () => {
+  // clips/source/start_time uydurma alanlardir; gercegi keyframes/url/timestamp
+  const wf = withCompose([
+    { id: 'video', type: 'video', clips: [{ source: '$fal_ai/kling/v2_1.video.url', start_time: 0 }] },
+  ])
+  assert.ok(has(validateWorkflow(wf), ERROR.COMPOSE_BAD_TRACK, 'node-compose'))
+})
+
+test('compose keyframe icindeki bilinmeyen alan yakalanir', () => {
+  const wf = withCompose([
+    {
+      id: 'video',
+      type: 'video',
+      keyframes: [
+        { timestamp: 0, duration: 6000, url: '$fal_ai/kling/v2_1.video.url', transition_out: 'hard_cut' },
+      ],
+    },
+  ])
+  assert.ok(has(validateWorkflow(wf), ERROR.COMPOSE_BAD_TRACK, 'node-compose'))
+})
+
+test('saniye yazilmis gibi gorunen sure uyari verir', () => {
+  // timestamp/duration MILISANIYE; 6 yazmak 6 ms demektir
+  const wf = withCompose([
+    { id: 'video', type: 'video', keyframes: [{ timestamp: 0, duration: 6, url: '$fal_ai/kling/v2_1.video.url' }] },
+  ])
+  assert.ok(has(validateWorkflow(wf), ERROR.COMPOSE_SUSPECT_MS, 'node-compose'))
+})
+
+test('dogru compose track sorun cikarmaz', () => {
+  const wf = withCompose([
+    {
+      id: 'video',
+      type: 'video',
+      keyframes: [{ timestamp: 0, duration: 6000, url: '$fal_ai/kling/v2_1.video.url' }],
+    },
+  ])
+  const r = validateWorkflow(wf)
+  assert.ok(!has(r, ERROR.COMPOSE_BAD_TRACK))
+  assert.ok(!has(r, ERROR.COMPOSE_SUSPECT_MS))
+})
+
 // --- katalog ---
 
 test('katalogdaki app degerleri temiz gecer', () => {

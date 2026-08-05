@@ -46,8 +46,26 @@ Toplam hedefi tuttur. Sapma varsa ara sahnelerden kırp, hook ve CTA'ya dokunma.
 
 ## Seslendirme metni
 
-- **Sahne süresinden kısa yaz.** Türkçe konuşma kabaca dakikada 140–160 kelime; yani saniyede
-  ~2,5 kelime. 6 saniyelik sahneye en fazla 12–14 kelime sığar ve nefes payı da lazım.
+### Süreyi **hece** sayarak hesapla — kelime sayısı yanıltır
+
+Türkçe sondan eklemelidir; kelime uzunlukları çok değişkendir. Sahada kelime bazlı tahmin
+kullanıldı ve gerçek süreyle arasındaki fark **%140'a** ulaştı: 2,6 sn sanılan cümle 6,2 sn
+sürdü ve 6 saniyelik sahneye sığmadı.
+
+`fal-audio`'nun kullandığı formülün **aynısını** kullan:
+
+```
+tahmini süre = (hece sayısı / 5) + (cümle sayısı × 0.4) + 0.6
+```
+
+Yani saniyede ~5 hece, artı cümle başına nefes payı. 6 saniyelik bir sahneye kabaca **25 hece**
+sığar.
+
+Bunu metni yazarken uygularsan `fal-audio`'nun geri dönüş turu hiç gerekmez — o tur zincirdeki
+tek geri dönüştür ve tamamen önlenebilir.
+
+- **Sahnenin %85–95'ini doldur.** Aşırı kısa metin sessizlik bırakır; iki saniyeden uzun
+  sessizlik izleyiciye "video bitti" hissi verir.
 - **Görüntüyü tekrarlama.** Ekranda dağınık masa varsa "masası dağınıktı" deme; görüntünün
   söylemediğini söyle.
 - **Cümleleri kısa kur.** Yan cümleli uzun yapılar seslendirmede boğulur.

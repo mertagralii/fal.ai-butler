@@ -200,11 +200,23 @@ Invoke-WebRequest -Uri 'https://mcp.fal.ai/mcp' -Method Post -Headers @{
 
 ---
 
-## Bilinen sınır: import adımı
+## Import — sahada doğrulandı
 
-fal, workflow JSON'unun panele **nasıl import edileceğini dokümante etmiyor**; Platform API'leri workflow için yalnızca okuma (list + get) veriyor, oluşturma endpoint'i yok.
+**2026-08-05:** üretilen `workflow.json` fal Workflow Builder'a import edildi ve **hatasız kabul edildi** (25 düğümlük bir kampanya). Biçim doğru.
 
-Üretilen dosya fal'ın workflow biçimindedir ve doğrulayıcıdan geçer — ama import adımı gerçek bir kampanyayla henüz denenmedi. Tutmazsa bu bir plugin hatası değildir; `storyboard.md`'yi kullanarak Workflow Builder'da elle kurabilirsin. Plugin bunu teslim mesajında da açıkça söyler.
+Import fal panelinden **elle** yapılır. Programatik oluşturma mümkün değil: `POST /workflows` ADMIN anahtarı ister, normal `FAL_KEY` 403 döner.
+
+Bunun bir sonucu var: workflow'un fal tarafından kabul edilip edilmeyeceği API'den doğrulanamaz, dolayısıyla `validate-workflow.mjs` **tek savunma hattıdır**. O yüzden doğrulayıcı fal'ın `contents` seviyesindeki zorunlu alanlarını ve montaj düğümünün track yapısını da denetler — ikisi de sahada workflow'u çalışamaz hale getiren hatalardı.
+
+### Montajın üç sert sınırı
+
+fal'ın `ffmpeg-api/compose` şeması gereği şunlar **yapılamaz** — plugin bunları baştan bilir ve plana yazmaz:
+
+| Sınır | Sonuç |
+|---|---|
+| Geçiş alanı yok | Yalnızca sert kesim; dissolve ve fade yok |
+| Ses seviyesi alanı yok | Zaman bazlı ducking imkânsız; müzik `loudnorm` ile baştan kısılır |
+| Metin track'i yok | Altyazı gömülemez — `.srt` yedek değil, tek seçenek |
 
 ---
 

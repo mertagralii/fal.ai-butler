@@ -29,6 +29,20 @@ video-to-image (son kare) · text-to-speech · text-to-music · ffmpeg (montaj)
 Her biri için fal MCP'de ara, şemasını çek, cache'e yaz, ele. Eleme kriterleri
 `model-selection.md`'de. Seçtiklerini endpoint id + şema + resmi örnek olarak zincire ver.
 
+**Seçtiğin her endpoint'i `models.json` katalog listesine de ekle** — yalnızca şema/fiyat
+cache'ine yazmak yetmiyor; aşama 2'de doğrulayıcı katalogda bulamazsa `UNKNOWN_ENDPOINT` verir
+ve gereksiz bir düzeltme turu doğar.
+
+**Fiyat raporunda ham `unit` dizesini aynen yaz**, yorumunu ayrı satırda ver:
+
+```
+seedance-2.0/fast/i2v · unit_price 0.0112 · ham unit: "units"
+  → yorum: 1.000 video token. 720p/24fps için ≈ $0.242/saniye (dokümandan çözüldü)
+```
+
+`unit` değeri `seconds`/`images`/`videos`/`minutes` değilse `search_docs` ile çöz; çözemiyorsan
+**o modeli seçme** (`skills/fal-butler/references/cost-model.md`).
+
 **Bulunamayan yetenek varsa** (örneğin video-to-image) `fal-animator`'a bildir ve kullanıcıya
 söylenmek üzere raporla. Sessizce zayıf zincir kurma.
 
@@ -44,8 +58,17 @@ Gerçek biçim (`schema.md`'de tam hâli):
 - Düğümler **`contents.nodes`** altında, üst seviyede değil
 - Model endpoint'i **`app`** alanında — `endpoint` değil
 - Çıkış düğümü **`type: "display"`** ve `input` yerine **`fields`** kullanır
-- `input` **sanal bir düğümdür** — `nodes` içinde yoktur, `contents.schema.input` ile tanımlanır
 - Referanslar `$düğüm-id.alan.yol`; düğüm id'leri eğik çizgi içerebilir
+
+**`contents` seviyesinde dördü de zorunlu** — eksikse panel "Field required" der ve workflow
+hiç çalıştırılamaz:
+
+| Alan | Değer |
+|---|---|
+| `contents.version` | `"1.0.0"` |
+| `contents.schema.input` | Varsayılan **boş `{}`** — girdi tanımlama, seed'i düğümlere göm |
+| `contents.schema.output` | Çıkış alanlarının şeması |
+| `contents.output` | `{ "<ad>": "$düğüm.alan" }` — `display.fields` ile **aynı** anahtar ve referanslar |
 
 ## Doğrulama — pazarlık yok
 

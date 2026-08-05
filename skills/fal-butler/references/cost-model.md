@@ -3,13 +3,46 @@
 Plugin para harcamaz, ama **ne kadar tutacağını söylemek zorundadır** — kullanıcı fal'da
 "çalıştır"a basmadan önce neye evet dediğini bilmeli.
 
-## Fiyat nereden gelir
+## Fiyat nereden gelir — ve asıl mesele fiyat değil, **birim**
 
-Her modelin fiyatı fal kataloğunda durur. `fal-compiler` bir modeli seçerken şemasıyla birlikte
-fiyatını da çeker ve cache'e yazar. **Fiyatı ezberden yazma** — kataloğa bak.
+Katalog (`search_models`) fiyat taşımaz; `get_pricing` ayrıca çağrılır. Ama asıl tuzak orada
+değil: `get_pricing`'in döndürdüğü `unit` dizesi **her zaman anlamlı değildir.**
 
-Fiyatlandırma biriminin modele göre değiştiğine dikkat et: görüntü başına, saniye başına,
-megapiksel başına, token başına. Birimi karıştırmak tahmini on kat şaşırtır.
+```json
+{ "unit_price": 0.0112, "unit": "units", "currency": "USD" }
+```
+
+Sahada bu `"units"` dizesi "saniye" sanıldı. Gerçek birim **1.000 video token**'dı:
+
+```
+tokens = (genişlik × yükseklik × FPS × süre) / 1024
+720p dikey, 24 FPS, 1 sn → (1280 × 720 × 24) / 1024 = 21.600 token = 21,6 birim
+21,6 × $0.0112 = $0.242/saniye        ← dokümandaki fiyatla birebir
+```
+
+Yani gerçek maliyet tahmin edilenin **21 katıydı** ve bu hata model seçimini tersine çevirdi:
+"6 kat pahalı" diye elenen model aslında 3 kat ucuzdu.
+
+### Bilinen birimler
+
+| ham `unit` | Anlamı | Hesap |
+|---|---|---|
+| `seconds` | Üretilen video saniyesi | fiyat × süre |
+| `videos` | Video başına sabit | fiyat × klip sayısı |
+| `images` | Görsel başına | fiyat × görsel sayısı |
+| `minutes` | Dakika başına | fiyat × dakika |
+| `compute seconds` | **GPU işlem saniyesi — çıktı süresiyle 1:1 DEĞİL** | Çarpanı dokümante değil; "tahmini" işaretle |
+| `units` | **Modele göre değişir, tek başına anlamsız** | Dokümandan çöz |
+
+### Sert kural
+
+`unit` değeri `seconds` / `images` / `videos` / `minutes` değilse, `search_docs` ile o modelin
+fiyat sayfasını bul ve birimi çöz. **Çözemiyorsan o modeli seçme** — birimi bilinmeyen bir
+modelin maliyet tahmini onay kapısında yalan söyler, ve kullanıcı fal panelinde gerçek fiyatı
+görene kadar bunu fark etmez.
+
+`fal-compiler` raporunda **ham `unit` dizesini her zaman aynen yaz**, yorumu ayrı satırda ver.
+Sahada yorumla ham değer karışınca hata iki tur boyunca fark edilmedi.
 
 ## Kalem dökümü
 
@@ -45,8 +78,13 @@ bedavadır. Yani "pahalı" şikâyeti geldiğinde bakılacak ilk yer her zaman v
 Kullanıcıya seçenek sunarken **her birinin ne kadar düşürdüğünü ve neyi feda ettiğini** söyle.
 Yüzdeleri kataloğun gerçek fiyatlarından hesapla, buradan kopyalama.
 
-1. **Çözünürlük düşür** (1080p → 720p). En iyi takas: maliyet belirgin düşer, sosyal medyada fark
-   çoğu izleyici için görünmez. **İlk öneri bu olsun.**
+**Önce fiyatlandırma birimine bak, sonra taktik seç.** Aşağıdaki sıra evrensel değil; hangi
+taktiğin işe yaradığı modelin nasıl fiyatlandığına bağlı.
+
+1. **Çözünürlük düşür** (1080p → 720p) — **yalnızca fiyatı piksele/çözünürlüğe bağlı modellerde.**
+   Saniye başına fiyatlanan bir video modelinde etkisi **sıfırdır**; orada çözünürlük anahtar kare
+   üretiminde belirlenir ve video maliyetini hiç değiştirmez. Sahada bu öneri geçersiz çıktı —
+   birimi kontrol etmeden önerme.
 2. **Sahne sürelerini kısalt.** Saniye başına fiyatlanan modellerde doğrudan orantılı. 8 sn yerine
    6 sn çoğu sahnede hikâyeyi bozmaz — ama açılış hook'unu ve CTA sahnesini kısaltma.
 3. **Sahne sayısını azalt.** 6 → 4 sahne. Kurguyu etkiler; hangi sahnenin düşeceğine `fal-director`

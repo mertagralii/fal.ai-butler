@@ -73,6 +73,16 @@ Her agent'a **yalnızca ihtiyacı olanı** ver; tüm sohbeti aktarma. `audio`, s
 bildirirse `animator`'a **bir kez** geri dön, sonra devam et. Aşama 2, aşama 1'in endpoint
 listesini `.fal-butler/cache/` üzerinden yeniden okur — alt agent çağrıları durumsuzdur.
 
+**Paralel çalışabilenler** (sahada denendi, sonucu bozmadan süreyi kısalttı):
+
+| Paralel | Neden mümkün |
+|---|---|
+| `compiler(aşama 1)` ∥ `director` | Director yalnızca `product.md` + `brief.md` ister, şemaya ihtiyacı yok |
+| `animator` ∥ `audio` | İkisi de `dop`'un çıktısından beslenir; `audio` yalnızca süre denetimi için `animator`'ın sonucunu bekler |
+| `editor` ∥ `promptsmith` | Promptsmith üretim düğümlerinin prompt'unu yazar, kurgudan bağımsız |
+
+Bağımlılığı olan halkaları paralelleştirme: `dop` `director`'ı, `compiler(2)` hepsini bekler.
+
 **Cache yazımı onay kuralının istisnasıdır:** aşama 1 model şemalarını `.fal-butler/cache/`
 altına yazar. "Onaydan önce dosya yazma" kuralı kampanya çıktıları için geçerlidir; cache
 yeniden üretilebilir ve `.gitignore`'dadır.
@@ -94,9 +104,21 @@ Onaydan sonra sırayla: `brief.md`, `storyboard.md`, `workflow.json`, `cost.md`.
 `workflow.json` doğrulayıcıdan geçmeden teslim etme.
 
 ### 6. Teslim
-Dosyanın tam yolunu ver ve fal'a import edileceğini söyle. **Import adımının fal dokümanında
-belgelenmediğini** de söyle (bkz. `skills/fal-workflow-json/references/schema.md`); tutmazsa
-`storyboard.md`'yi kullanarak Workflow Builder'da elle kurabileceğini belirt.
+
+Dosyanın tam yolunu ver ve fal panelinden **elle import** edileceğini söyle.
+
+**Programatik doğrulama mümkün değildir:** `POST /workflows` ADMIN anahtarı ister, normal
+`FAL_KEY` 403 döner. Yani `validate-workflow.mjs` tek savunma hattıdır — geçmeyen dosyayı asla
+teslim etme.
+
+Import sonrası kullanıcının panelde kontrol edeceği liste:
+
+- Düğümler ve bağlantılar göründü mü
+- `Save & Run` → başlık → `Create` adımı **"Field required"** vermiyor mu
+  (veriyorsa `contents.version` / `output` / `schema.output` eksik demektir — bkz. `schema.md`)
+- Montaj düğümündeki track'ler dolu mu (boş görünüyorsa keyframe alan adları yanlış)
+
+Bu biçim 2026-08-05'te gerçek bir kampanyayla import edilip kabul edildi; format doğru.
 
 ---
 
