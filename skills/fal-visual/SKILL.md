@@ -42,6 +42,11 @@ Ekran içeriği anlatı için önemliyse **over-the-shoulder veya ekran-önden p
 
 ### 2. Uzuv kadrajı — el varsa kol da kadrajda
 
+**Anatomi bozukluğu teslim edilebilir değildir.** Eksik uzuv, fazladan parmak, üç göz — hiçbiri
+"AI böyle" diye geçilemez. Bunun büyük kısmı **kadraj kararıyla** önlenir, prompt'la değil:
+riskli kadrajı hiç kurma (bkz. `skills/fal-prompt/references/photorealism.md` → riskli
+kadrajlar).
+
 *Kusur: "bileği, eli ve parmakları var ama kolu yok — el uçuyor gibi."*
 
 Aşırı yakın detay planında model, kadraja giren uzvu gövdeye bağlamak zorunda kalmadığı için

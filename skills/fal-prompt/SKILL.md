@@ -16,8 +16,20 @@ Model değişince prompt biçimi de kendiliğinden değişir.
 
 ## Referanslar
 
+- **`references/photorealism.md`** — **anatomi kuralı, referans prompt kalıbı, fotogerçekçilik
+  sözlüğü.** Her video/görsel prompt'unda uygulanır
 - **`references/dialects.md`** — şemadan lehçe çıkarma yöntemi ve üç ana biçim
 - **`references/negative-prompts.md`** — negatif prompt, seed, parametre ayarı
+
+## Anatomi — pazarlık yok
+
+Eksik uzuv, fazladan parmak, üç göz, gövdeye bağlanmayan el asla kabul edilmez. `negative_prompt`
+çoğu modelde yok; anatomi **olumlu ve somut tarifle** korunur:
+
+> both hands fully visible with five fingers each, natural finger articulation ·
+> left forearm entering frame from the left, shoulder visible at frame edge
+
+Ayrıntı ve riskli kadraj listesi `references/photorealism.md`'de.
 
 ## Girdin ve çıktın
 

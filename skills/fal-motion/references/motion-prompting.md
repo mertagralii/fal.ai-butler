@@ -28,8 +28,28 @@ vermek ikisini karıştırır:
 **4. Hızı belirt.** "Yavaşça", "hafifçe", "ağır ağır". Belirtilmezse model hızlı ve tedirgin
 hareket üretme eğilimindedir — reklamda neredeyse her zaman yanlış.
 
-**5. Sahne değişimi tarif etme.** Kesme, geçiş, "sonra" gibi ifadeler tek klip içinde işlemez;
-model ya yok sayar ya sahneyi ortasından kırar. Geçişler `fal-edit`'in işidir.
+**5. Kadro değişimini kesme diye değil, kesintisiz kamera hareketi diye yaz.**
+
+"Kesme", "cut to", "sonra" gibi montaj dili tek klip içinde işlemez. **Ama kadro değişiminin
+kendisi işler** — yeter ki kamera hareketi olarak tarif edilsin. Referans üretimlerde bu böyle
+yapılıyor:
+
+> "Camera starts wide/medium on her riding out of the tunnel mouth into open light. Camera moves
+> in smoothly, arcing around to the front of her, coming to rest in a close-up as she comes to a
+> stop."
+
+Tek klip, geniş plandan yakın plana geçiyor — kesme yok, kamera hareketi var.
+
+**Bu bizim için kritik.** `compose` yalnızca sert kesim yapabiliyor
+(`skills/fal-edit/references/compose-schema.md`), yani montajda yumuşak geçiş kuramıyoruz.
+Akıcılığın tek kaynağı **geçişi modelin içine almak.**
+
+Model destekliyorsa **iki beat'i tek klipte üret**: klip sayısı düşer, montaj boşluğu riski
+azalır, geçiş doğal olur. Şemada çok planlı üretim (`SHOT 1 / SHOT 2` kalıbı) destekleniyorsa
+`skills/fal-prompt/references/photorealism.md`'deki iskeleti kullan.
+
+**Yine de yasak:** "cut to", "sahne 2 başlar", "ekran kararır" gibi montaj komutları. Fark şu —
+*kamera hareketi* tarif etmek serbest, *kurgu* tarif etmek değil.
 
 **6. Arka planı sabit tut.** "Arka plan sabit kalıyor" cümlesi, modelin mekanı kaydırmasını
 belirgin şekilde azaltır. Mekan kayması, sahneler arası tutarlılığı bozan en yaygın hatadır.
