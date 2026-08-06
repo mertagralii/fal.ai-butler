@@ -171,7 +171,10 @@ Toptan indirme yapma — kampanyada altı-yedi model kullanılıyor; katalog lis
 
 ### 4. Ürünü öğren — **önce kaynağı sor**
 
-Ürün profili iki kaynaktan çıkabilir. **AskUserQuestion ile sor:**
+Anahtar ve bağlantı hazır. Şimdi ürünü öğrenmen gerekiyor ve **bunu tek başına varsayamazsın** —
+kaynağı kullanıcıya sor.
+
+**AskUserQuestion ile sor:**
 
 > Ürününü tanımam için nereye bakayım?
 >
@@ -179,8 +182,37 @@ Toptan indirme yapma — kampanyada altı-yedi model kullanılıyor; katalog lis
 > - **Sitemi incele** — canlı siteni okurum, pazarlama dilini ve görsel kimliğini oradan alırım
 > - **İkisini birden** *(en iyi sonuç)* — teknik gerçeği repo'dan, pazarlama dilini siteden
 
-Argümanda bir URL verilmişse (`--` ile başlamayan, `http` içeren sözcük) **sorma** — o siteyi
-kullan, ayrıca repo'da anlamlı içerik varsa "ikisini birden" gibi davran.
+#### Seçime göre devam
+
+| Seçim | Sonraki adım |
+|---|---|
+| Bu projeyi tara | Doğrudan "Proje taraması"na geç |
+| Sitemi incele / İkisini birden | **URL'i sor** *(argümanda yoksa)* |
+
+URL'i şöyle iste — tek satır, örnekli:
+
+> Sitenin adresi nedir? Örneğin `https://urunum.com`
+
+Verilen adresi **doğrula**: `http`/`https` ile başlıyor mu, alan adı geçerli görünüyor mu.
+Erişilemiyorsa (404, zaman aşımı, DNS hatası) durumu söyle ve seçenek sun: başka bir adres mi
+denesin, yoksa proje taramasına mı geçelim.
+
+#### Argümanda URL verilmişse
+
+`http` içeren bir sözcük argümanda geldiyse **kaynağı sorma** — o siteyi kullan. Repo'da da
+anlamlı içerik varsa (README dolu, paket dosyası var) "ikisini birden" gibi davran ve bunu
+kullanıcıya bildir:
+
+> `https://urunum.com` adresini inceleyeceğim. Bu projede de README ve `package.json` var,
+> ikisini birleştiriyorum.
+
+#### Proje boşsa
+
+Klasörde anlamlı içerik yoksa (README yok ya da boş, paket dosyası yok) "bu projeyi tara"
+seçeneğini **sunma** — çalışmayacak bir seçenek göstermek kullanıcıyı yanıltır. Bunun yerine
+doğrudan URL iste ve sebebini söyle:
+
+> Bu klasörde ürünü tanıyabileceğim bir içerik bulamadım. Ürün sitenin adresini verir misin?
 
 #### Proje taraması
 
@@ -221,6 +253,13 @@ Dosya zaten varsa üzerine yazmadan önce sor; kullanıcı elle düzenlemiş ola
 
 Kullanıcının repo'sundaki `.gitignore`'a `.fal-butler/cache/` satırının eklenmesini hatırlat.
 Zaten varsa sessiz geç.
+
+### 6b. Kaynağı teyit et
+
+Profili yazdıktan sonra neye baktığını **tek satırda** söyle ki kullanıcı yanlış kaynağa
+bakıldığını hemen fark edebilsin:
+
+> Profili `https://urunum.com` (ana sayfa, /pricing) ve bu projenin README'sinden çıkardım.
 
 ### 7. Bitir
 
