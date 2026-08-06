@@ -11,7 +11,9 @@ başlıklara göre okuyup güncelliyor.
 # Ürün profili: <Ürün Adı>
 
 **Çıkarım tarihi:** YYYY-MM-DD
-**Kaynaklar:** README.md, package.json, app/page.tsx   <!-- neye baktığın -->
+**Kaynaklar:** https://urunum.com (ana sayfa, /pricing) · README.md · app/page.tsx
+<!-- Neye baktığın. Site varsa adresi ve hangi sayfalar. Site bayatlayabilir; kullanıcı
+     neye bakıldığını görebilmeli. -->
 
 ## Ne yapıyor
 <Bir paragraf. Teknik mimari değil, kullanıcıya ne sağladığı.>
@@ -36,6 +38,10 @@ başlıklara göre okuyup güncelliyor.
 
 ## Reklamda kullanılmayacaklar
 <Kullanıcının istemediği şeyler. Yoksa "belirtilmedi" yaz.>
+
+## Kaynak çelişkileri
+<Repo ile site farklı şey söylüyorsa buraya yaz. Site kazanır ama fark kayda geçsin.
+ Çelişki yoksa bu bölümü hiç yazma.>
 ```
 
 ## `.fal-butler/campaigns/<slug>/brief.md`

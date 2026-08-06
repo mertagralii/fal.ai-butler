@@ -49,6 +49,7 @@ edilecek bir `workflow.json` teslim etmek.
 
 - **`references/method.md`** — üç komutun uçtan uca yöntemi ve onay kapıları
 - **`references/interview.md`** — altı aşamalı röportaj: soru sırası, rehber tablolar, örnekler
+- **`references/site-analysis.md`** — canlı siteden ürün profili çıkarma; güvenlik kuralları
 - **`references/cache-discipline.md`** — canlı çekme, TTL, çevrimdışı davranış, hata tablosu
 - **`references/cost-model.md`** — maliyet kalemleri, tahmin, ucuzlatma taktikleri
 - **`references/file-schemas.md`** — `product.md`, `brief.md`, `storyboard.md`, `cost.md` biçimleri

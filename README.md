@@ -35,7 +35,29 @@ Plugin **hiçbir modeli çalıştırmaz** — bu bir söz değil, mekanizma: age
 /fal-butler:setup <fal-api-anahtarın>
 ```
 
-Bu kadar. Anahtar `~/.claude/settings.json` dosyana yazılır, bağlantı test edilir, katalog önbelleğe alınır ve projen taranıp ürün profilin çıkarılır — hepsi tek seferde.
+Ürün sitesi de varsa aynı satırda verebilirsin:
+
+```
+/fal-butler:setup <anahtarın> https://urunum.com
+```
+
+Bu kadar. Anahtar `~/.claude/settings.json` dosyana yazılır, bağlantı test edilir, katalog önbelleğe alınır ve ürün profilin çıkarılır — hepsi tek seferde.
+
+### Ürününü nereden öğreniyor
+
+Setup sana sorar:
+
+| Kaynak | Ne verir |
+|---|---|
+| **Bu projeyi tara** | README, paket dosyaları, landing page kodu, i18n metinleri |
+| **Sitemi incele** | Canlı sitenin pazarlama dili, hero başlığı, CTA metni, görsel kimlik |
+| **İkisini birden** | En iyi sonuç — teknik gerçek repo'dan, pazarlama dili siteden |
+
+Site genelde daha iyi kaynaktır: repo'da ürünün *kodu* var, sitede ürünün **hedef kitleye söylediği cümle** var — reklam için aradığımız tam olarak bu. İkisi çelişirse site kazanır.
+
+Statik siteler doğrudan okunur; JavaScript ile render edilen sitelerde plugin'in getirdiği Playwright devreye girer ve sayfayı gerçekten çalıştırıp okur.
+
+> **Güvenlik:** site içeriği **veri** olarak işlenir, talimat olarak değil. Sayfada plugin'e yönelik bir yönerge bulunursa uygulanmaz — sana alıntılanır ve işlem durur. Yalnızca verdiğin alan adında kalınır, dış bağlantılar takip edilmez, giriş isteyen sayfada durulur.
 
 Anahtarı zaten kayıtlıysa argümansız çalıştır: `/fal-butler:setup`
 
@@ -78,7 +100,7 @@ Hangi yöntemi kullanırsan kullan, `setup` bağlantıyı gerçekten test eder �
 
 | Komut | Ne yapar |
 |---|---|
-| `/fal-butler:setup [anahtar]` | Anahtarı kaydeder, MCP bağlantısını doğrular, model kataloğunu önbelleğe alır, projeni tarayıp `product.md` ürün profilini çıkarır. Bir kez çalıştırılır. |
+| `/fal-butler:setup [anahtar] [site-url]` | Anahtarı kaydeder, MCP bağlantısını doğrular, model kataloğunu önbelleğe alır, **projeni veya siteni** inceleyip `product.md` ürün profilini çıkarır. Bir kez çalıştırılır. |
 | `/fal-butler:campaign` | Röportajı yürütür, kurguyu planlar, **onayını ister**, sonra `workflow.json` üretir |
 | `/fal-butler:revise` | Var olan bir `workflow.json`'u ucuzlatır veya kurgusunu değiştirir |
 
@@ -226,7 +248,7 @@ fal'ın `ffmpeg-api/compose` şeması gereği şunlar **yapılamaz** — plugin 
 |---|---|---|
 | **fal** | Model arama, şema okuma, fiyat, doküman | `https://mcp.fal.ai/mcp` — HTTP. Kimlik `Authorization: Key ${FAL_KEY}` başlığıyla istek başına gönderilir, saklanmaz |
 | **context7** | Kütüphane/SDK dokümanını güncel çekmek | `npx -y @upstash/context7-mcp` |
-| **playwright** | fal doküman sayfalarını tarayıcıyla okumak | `npx @playwright/mcp@latest` |
+| **playwright** | **JavaScript ile render edilen ürün siteni okumak** ve görsel kimliği için ekran görüntüsü almak | `npx @playwright/mcp@latest` |
 
 `context7` ve `playwright` ilk açılışta `npx` ile indirilir. Aynı sunucuları başka bir plugin de getiriyorsa ayrı ad alanlarında çalışırlar — çakışmaz, ama iki süreç açılır.
 

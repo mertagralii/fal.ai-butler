@@ -10,7 +10,9 @@ Tek seferlik kurulum. Sırayla, durmadan:
 2. **fal MCP ayakta mı?** Ucuz bir okuma çağrısıyla dene (ör. model araması). Başarısızsa
    `references/cache-discipline.md`'deki hata tablosuna bak.
 3. **Katalogu cache'e doldur.** Anahtar: `models`. Bkz. `references/cache-discipline.md`.
-4. **Projeyi tara.** Aşağıdaki "Proje tarama" bölümü.
+4. **Ürünü öğren.** Kaynağı **sor**: bu projeyi tara / sitemi incele / ikisini birden.
+   Argümanda URL verildiyse sorma, onu kullan. Site tarafı için `references/site-analysis.md`;
+   repo tarafı için aşağıdaki "Proje tarama" bölümü. **Çelişirlerse site kazanır.**
 5. **`product.md` üret.** Çıkaramadığın alanları AskUserQuestion ile sor — hepsini birden değil,
    eksik olanları.
 6. **`.gitignore` hatırlatması:** kullanıcının repo'suna `.fal-butler/cache/` satırını eklemesini
