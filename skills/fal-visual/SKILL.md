@@ -15,6 +15,7 @@ göğüs planı, hafif alt açı" dersin. Kullanıcının sinematografi bilmesi 
 - **`references/cinematography.md`** — plan ölçekleri, lens karakteri, kamera açısı
 - **`references/lighting.md`** — ışık kurulumları, günün saati, renk sıcaklığı, mood
 - **`references/composition.md`** — kadraj, denge, dikey formatta güvenli alan
+- **`references/character-sheet.md`** — karakter sayfası: **tek görsel, çoklu açı**, ızgara düzeni
 
 ## Girdin ve çıktın
 

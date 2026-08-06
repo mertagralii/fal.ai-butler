@@ -50,7 +50,7 @@ Sahada yorumla ham değer karışınca hata iki tur boyunca fark edilmedi.
 
 | Kalem | Adet | Birim fiyat | Tutar |
 |---|---|---|---|
-| Karakter sayfası (image) | 4 görsel | $X/görsel | $A |
+| Karakter sayfası (image) | **1 görsel** (çok panelli sayfa) | $X/görsel | $A |
 | Sahne anahtar kareleri (image-edit) | 6 görsel | $X/görsel | $B |
 | Sahne videoları (i2v) | **klip** sayısı × süre | $X/sn | $C |
 | Seslendirme (TTS) | ~60 sn | $X/1k karakter | $D |

@@ -5,16 +5,24 @@ yetmez — modeli bir yüze bağlamak gerekir. Yöntem: **referans görsel + zin
 
 ## Beş adım
 
-### 1. Karakter sayfası — bir kez
+### 1. Karakter sayfası — bir kez, **tek görsel**
 
-Aynı kişinin 3–5 farklı açıdan görselini üret: **ön, 3/4, profil, yakın portre**. Ortam nötr,
-ışık düz — bu görseller sahne değil, referans.
+Ayrı ayrı 3–5 görsel değil: **tek bir görselde, ızgara düzeninde bütün açılar.** Ön, sağ profil,
+3/4 ve bir bağlam karesi. Ortam nötr, ışık düz — bu bir sahne değil, referans levhası.
 
-Prompt'u karakter bible'ından birebir kur. Tüm sahnelerin kaynağı bu görsellerdir; burada
-oluşan her sapma altı sahneye çarpan olarak yansır.
+Sebep: aynı görselin panelleri birbirini görerek üretilir, dolayısıyla **yapısı gereği aynı
+kişidir**. Ayrı üretimlerde böyle bir bağ yoktur ve her biri biraz farklı bir insan olabilir.
+Ayrıca tek üretim daha ucuz ve bağlanacak tek URL demek.
 
-**Ürün-ekran anlatımında** karşılığı: arayüzün referans görselleri (ana ekran, liste, detay).
-Aynı mantık.
+**`num_images: 1`** — çoklu açı prompt'ta istenir, üretim sayısıyla değil.
+
+Tam düzen, prompt iskeleti ve yasaklar: `skills/fal-visual/references/character-sheet.md`.
+
+Prompt'u karakter bible'ından birebir kur. Tüm kliplerin kaynağı bu görseldir; burada oluşan her
+sapma bütün kliplere çarpan olarak yansır.
+
+**Ürün-ekran anlatımında** karşılığı: arayüzün referans sayfası (ana ekran, liste, detay — yine
+tek görselde). Aynı mantık.
 
 ### 2. Klip anahtar karesi — image-edit ile, **klip başına bir tane**
 

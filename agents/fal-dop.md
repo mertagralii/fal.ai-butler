@@ -16,6 +16,7 @@ kullanılacağını ve paletin ne olduğunu söylüyorsun.
 - `${CLAUDE_PLUGIN_ROOT}/skills/fal-visual/references/cinematography.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/fal-visual/references/lighting.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/fal-visual/references/composition.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/fal-visual/references/character-sheet.md`
 
 ## Girdin
 
@@ -26,10 +27,18 @@ Ayrıca `brief.md`'den platform ve en-boy oranı.
 
 ```
 ## KARAKTER SAYFASI REÇETESİ
-- **Açılar:** ön, 3/4, profil, yakın portre
-- **Ortam:** nötr, sade arka plan
-- **Işık:** düz, yumuşak, yönsüz — bu referans, sahne değil
-- **Kadraj:** göğüs planı, yüz net okunuyor
+**Tek görsel, ızgara düzeni** — ayrı ayrı görseller değil (`num_images: 1`).
+- **Düzen:** 2×2 ızgara, 4 panel
+- **Panel 1:** ön görünüm, göğüs planı, kameraya bakıyor
+- **Panel 2:** sağ profil, göğüs planı
+- **Panel 3:** 3/4 açı, göğüs planı
+- **Panel 4:** bağlam karesi — <karakter> <mekanda>, <eylem>
+- **Arka plan:** düz açık gri, nötr — bu bir sahne değil, referans levhası
+- **Işık:** düz ve yumuşak, **panelden panele değişmiyor**
+- **Değişmezler:** kıyafet, aksesuar, saç — dört panelde birebir aynı
+- **Oran:** kampanya oranına uymak zorunda değil; en yüksek çözünürlük
+
+Tam kural seti: `${CLAUDE_PLUGIN_ROOT}/skills/fal-visual/references/character-sheet.md`
 
 ## SAHNE REÇETELERİ
 

@@ -59,13 +59,17 @@ Düğüm başına, `workflow.json`'a doğrudan gidecek `input` nesnesi:
 **Lehçe:** doğal dil paragraf (resmi örnekten)
 ```json
 {
-  "prompt": "…",
-  "negative_prompt": "…",
-  "num_images": 4,
-  "seed": 731914,
-  "aspect_ratio": "9:16"
+  "prompt": "Character reference sheet of the same person, 4 panels in a 2x2 grid, consistent lighting and identical clothing across all panels, plain light grey background, neutral studio lighting. Panel 1 — front view, chest up, looking at camera. Panel 2 — right profile, chest up. Panel 3 — three-quarter view, chest up. Panel 4 — <bağlam>. [SABİT KARAKTER BLOĞU] <fotogerçekçilik sözlüğü>",
+  "num_images": 1,
+  "seed": 731914
 }
 ```
+
+**`num_images: 1`** — çoklu açı prompt'ta istenir, üretim sayısıyla değil. Dört ayrı üretim
+dört farklı insan riski demektir; tek sayfadaki paneller yapısı gereği aynı kişidir
+(`skills/fal-visual/references/character-sheet.md`).
+
+Sayfanın oranı kampanya oranına uymak zorunda değil — o bir referans, teslim edilecek kare değil.
 
 ### node-keyframe-1 — <endpoint id>
 ```json
@@ -101,7 +105,8 @@ referansını bağlayacak. Sen alanın **var olduğunu** ve neyi beklediğini be
 - **`negative_prompt` yoksa yazma.** Desteklenmeyen alan hata verir ya da yok sayılır.
 - **Aynı seed'i tüm düğümlerde kullan.** Kampanya başına tek seed.
 - **`strength` düşük tut** (image-edit'te) — karakter sayfasına sadakat, zincirin en kırılgan yeri.
-- **`num_images`: karakter sayfası dışında 1.** Fazlası doğrudan maliyet.
+- **`num_images`: her zaman 1** — karakter sayfası dahil. Çoklu açı prompt'ta istenir.
+  Fazlası hem doğrudan maliyet hem tutarlılık riski.
 - **Uzunluk:** doğal dilde 40–80 kelime; etiket listesinde 15–25 etiket. Resmi örnek belirgin
   farklıysa **örneği taklit et**.
 - **Video prompt'u değişim tarif eder**, durum değil. Durağan betimlemeyi video düğümüne kopyalama.
