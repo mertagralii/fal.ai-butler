@@ -97,11 +97,26 @@ Model: <endpoint> · 6 sn · ~$X
 
 …
 
+### Üretim yapısı
+<N> sahne, <M> klipte üretilecek — sahne→klip eşleme tablosu
+
 ### Kullanılacak modeller
 <tablo: modalite, endpoint, fiyat>
 
 ### Tahmini toplam maliyet
-**~$T** — dökümü onaydan sonra `cost.md`'ye yazılacak.
+
+Kalite tercihi "sonra karar vereyim" ise **iki seçeneği yan yana** göster:
+
+| | Bütçe | Kalite |
+|---|---|---|
+| Video modeli | <endpoint> | <endpoint> |
+| Çözünürlük | <değer> | <değer> |
+| **Toplam** | **~$X** | **~$Y** (%N daha pahalı) |
+
+Fark nereden geliyor, tek cümleyle somut yaz. `compose`'un finali 720p'ye düşürdüğünü de
+burada söyle.
+
+Tek yapılandırma seçildiyse tutarı ver, diğerinin ne tutacağını bir satırda belirt.
 
 ### Uyarılar
 <fal-animator, fal-audio ve fal-editor'ün raporladığı her şey:
@@ -118,9 +133,11 @@ Sonra onay iste. Beğenmezse **ilgili agent'tan itibaren** yeniden çalıştır 
 Onaydan sonra sırayla:
 
 1. `.fal-butler/campaigns/<YYYY-MM-DD-slug>/brief.md`
-2. `storyboard.md`
+2. `storyboard.md` — **sahne→klip eşleme tablosu dahil**
 3. `fal-compiler` aşama 2 → `workflow.json` (doğrulamadan geçmeden devam etme)
 4. `cost.md`
+5. Kapsama göre: `subtitles.srt` *(altyazı üretilecekse)* ·
+   `voiceover-script.md` *(seslendirmeyi kullanıcı yapacaksa)*
 
 Biçimler `file-schemas.md`'de.
 

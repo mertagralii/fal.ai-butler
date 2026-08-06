@@ -165,6 +165,30 @@ kapalıysa "Ses" satırını yazma.
 > Bu bir tahmindir. Gerçek tutarı fal panelinde göreceksin; yeniden denemeler artırabilir.
 ```
 
+## `.fal-butler/campaigns/<slug>/subtitles.srt`
+
+Altyazı **üretilsin** seçildiyse ayrı bir dosya olarak yazılır — `storyboard.md`'nin içine
+gömülmez, çünkü kullanıcı bunu doğrudan Instagram/TikTok yükleme ekranına verecek.
+
+```
+1
+00:00:00,500 --> 00:00:02,900
+Gün başlamadan yorulmak…
+
+2
+00:00:06,400 --> 00:00:08,200
+Bildirimler bitmiyor.
+```
+
+Zaman damgasında **virgül** (nokta değil), saat alanı iki hane, numaralar 1'den başlar.
+
+Teslimde bu dosyanın yolunu ver ve **videoya gömülemediğini** hatırlat
+(`skills/fal-edit/references/compose-schema.md`).
+
+Seslendirme **"sonra kendim yaparım"** seçildiyse aynı klasöre `voiceover-script.md` yaz:
+sahne bazında metin, başlangıç saniyesi ve tahmini süre — kullanıcı kendi kaydını buna göre
+yapacak.
+
 ## `.fal-butler/campaigns/<slug>/revisions/`
 
 `revise` her değişiklikten **önce** mevcut `workflow.json`'u buraya kopyalar:

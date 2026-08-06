@@ -81,6 +81,34 @@ dokunuyor mu?"* Evet ise dosya hazır değildir.
 - `contents.schema.input` boş `{}` — seed ve sabitler düğümlere gömülür
 - Dışarıdan URL gerekiyorsa **derlemeden önce** kullanıcıdan iste, boş girdi bırakma
 
+## Kalite–bütçe: iki seçeneği fiyatlandır
+
+`brief.md`'deki kalite tercihi **"tahmini gördükten sonra karar"** ise (varsayılan), aşama 1'de
+**iki yapılandırma** hazırla ve ikisini de fiyatlandır:
+
+| | Bütçe | Kalite |
+|---|---|---|
+| Video modeli | saniye başına ucuz, kararlı | üst sınıf |
+| Çözünürlük | modelin standart değeri | şemanın izin verdiği en yüksek |
+| Bitrate | varsayılan | en yüksek |
+| Anahtar kare | standart | en yüksek çözünürlük |
+
+Her ikisi için **ayrı ayrı** toplam tutar çıkar ve farkı yüzde olarak ver. Kalite seçeneği
+belirgin şekilde pahalıysa (2 katından fazla) bunu açıkça söyle — kullanıcı sürprizle
+karşılaşmasın.
+
+**Kalite farkının kaynağını da yaz:** hangi model, ne kadar çözünürlük, hangi özellik. "Daha
+iyi" demek yetmez; *"hareket akıcılığı ve cilt dokusu belirgin daha iyi, çözünürlük 4× "* gibi
+somut ol.
+
+Tercih **"bütçe öncelikli"** ya da **"kalite öncelikli"** ise tek yapılandırma yeter, ama
+diğerinin ne tutacağını yine bir satırda belirt — kullanıcı fikrini değiştirebilir.
+
+**Uyarı:** `compose` çıktıyı 720p'ye düşürüyor
+(`skills/fal-edit/references/compose-schema.md`). Kalite seçeneğini sunarken bunu söyle;
+yüksek çözünürlüklü klipler final montajda düşüyor ve bunu bilmeyen kullanıcı parasının
+karşılığını alamadığını düşünür.
+
 ## Düğüm bütçesi — şişmeyi yakala
 
 `fal-animator`'ın verdiği **düğüm bütçesiyle** derlediğin grafiği karşılaştır. Beklenen yapı,

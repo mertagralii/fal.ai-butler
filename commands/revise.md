@@ -73,16 +73,36 @@ kampanyayı çöpe atmaktır — gerekçesiyle birlikte reddet.
 
 ### Kurgu revizyonu
 
-İlgili agent'ı yeniden çalıştır, zincirin kalanını koru:
+**Önce sahneyi klibe çevir.** Kullanıcı "3. sahne" der ama üretim birimi klip; bir klip birden
+fazla sahne taşıyabilir. `storyboard.md`'deki **sahne → klip eşlemesi** tablosuna bak.
+
+**Bunun sonucunu kullanıcıya söyle:**
+
+> Sahne 3, klip 2'nin içinde — o klip sahne 3 ve 4'ü birlikte taşıyor. Sahne 3'ü düzeltmek için
+> klibi yeniden üretmem gerekiyor, yani **sahne 4 de değişecek.** Sahne 4'ten memnunsan
+> ikisini ayrı kliplere bölebilirim ama o zaman aradaki geçiş sert kesim olur ve akıcılık düşer.
+>
+> Nasıl ilerleyelim?
+
+Bu, sahne–klip ayrımının kaçınılmaz bedeli ve kullanıcı bunu **önceden** bilmeli. Sessizce
+komşu sahneyi değiştirme.
+
+Etkilenen klibi belirledikten sonra ilgili agent'ı yeniden çalıştır, zincirin kalanını koru:
 
 | İstek | Kim çalışır | Etki |
 |---|---|---|
-| "3. sahne daha aydınlık" | `fal-dop` → `fal-promptsmith` → `fal-compiler` | tek düğüm |
-| "3. sahne daha yavaş" | `fal-animator` → `fal-promptsmith` → `fal-compiler` | tek düğüm |
-| "3. sahneyi at, 5'i uzat" | `fal-director` → tüm zincir | süre dengesi bozulur |
-| "karakter daha genç olsun" | `fal-director` → tüm zincir | **karakter sayfası + tüm sahneler yeniden** |
+| "3. sahne daha aydınlık" | `fal-dop` → `fal-promptsmith` → `fal-compiler` | **sahnenin bulunduğu klip** yeniden üretilir — o klipteki tüm sahneler değişir |
+| "3. sahne daha yavaş" | `fal-animator` → `fal-promptsmith` → `fal-compiler` | aynı — klip bazında |
+| "3. sahneyi at, 5'i uzat" | `fal-director` → `fal-animator` → tüm zincir | süre değişti, **klip paketlemesi yeniden hesaplanır** |
+| "sahne 3 ile 4 ayrı klip olsun" | `fal-animator` → sonrası | klip sayısı artar, aradaki geçiş sert kesim olur |
+| "karakter daha genç olsun" | `fal-director` → tüm zincir | **karakter sayfası + tüm klipler yeniden** |
 | "müziği çıkar" | `fal-audio` → `fal-editor` → `fal-compiler` | düğüm silinir |
-| "altyazı ekle" | `fal-audio` → `fal-editor` → `fal-compiler` | destek kontrolü tekrar |
+| "müziği ben ekleyeceğim" | `fal-editor` → `fal-compiler` | müzik track'i kaldırılır, video müziksiz teslim edilir |
+| "altyazı ekle" | `fal-audio` → `fal-editor` → `fal-compiler` | `.srt` üretilir — videoya gömülemez, söyle |
+
+**Süre veya sahne sayısı değişen her istekte `fal-animator` yeniden çalışır** — klip
+paketlemesi süreye bağlı (`ceil(süre ÷ model tavanı)`), sahne eklenip çıkarılınca eşleme
+geçersizleşir. `storyboard.md`'deki eşleme tablosunu da güncelle.
 
 **Karakter değişiyorsa** bunu maliyetiyle birlikte söyle **önce onay al**: karakter sayfası ve
 altı sahnenin tamamı yeniden üretilecek, yani neredeyse yeni bir kampanya maliyeti.
